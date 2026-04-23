@@ -1,30 +1,15 @@
 package com.example.demo.service;
 
 import com.example.demo.models.Cliente;
-import com.example.demo.repository.ClienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.util.List;
 
-@Service
-public class ClienteService {
-    @Autowired
-    private ClienteRepository repository;
+public interface ClienteService {
 
-    public List<Cliente> listar() {
-        return repository.findAll();
-    }
+    List<Cliente> listar();
 
-    public Cliente guardar(Cliente cliente) {
-        return repository.save(cliente);
-    }
+    Cliente guardar(Cliente cliente);
 
-    public Cliente buscarPorId(Long id) {
-        return repository.findById(id).orElse(null);
-    }
+    Cliente buscarPorId(Long id);
 
-    public void eliminar(Long id) {
-        repository.deleteById(id);
-    }
+    void eliminar(Long id);
 }
