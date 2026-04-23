@@ -7,25 +7,27 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController
-@RequestMapping("/api/ventas")
+@RestController // Indica que es un controlador REST (responde en JSON)
+@RequestMapping("/api/ventas") // Ruta base: /api/ventas
 public class VentaController {
 
-    @Autowired
+    @Autowired // Inyección automática del servicio
     private VentaService service;
 
-    @GetMapping
+    @GetMapping // Endpoint GET -> listar todas las ventas
     public List<Venta> listar() {
-        return service.listar();
+        return service.listar(); // Obtiene la lista desde el servicio
     }
 
-    @PostMapping
+    @PostMapping // Endpoint POST -> guardar una nueva venta
     public Venta guardar(@RequestBody Venta venta) {
-        return service.guardar(venta);
+        // Convierte el JSON en un objeto Venta
+        return service.guardar(venta); // Guarda la venta
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/{id}") // Endpoint GET -> obtener una venta por ID
     public Venta obtener(@PathVariable Long id) {
-        return service.obtener(id);
+        // Captura el ID desde la URL
+        return service.obtener(id); // Busca la venta
     }
 }

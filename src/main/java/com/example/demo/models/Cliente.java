@@ -3,28 +3,32 @@ package com.example.demo.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-@Entity
-@Table(name = "clientes")
+@Entity // Indica que esta clase es una entidad de base de datos
+@Table(name = "clientes") // Nombre de la tabla en la BD
 public class Cliente {
-    @Id
+
+    @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // ID autogenerado (auto-incremental)
     private Long id;
 
-    @NotBlank
-    @Size (min =3, max =50)
-    private String tipo;
+    @NotBlank // No permite valores vacíos o null
+    @Size(min = 3, max = 50) // Longitud entre 3 y 50 caracteres
+    private String tipo; // Tipo de cliente (ej: natural, empresa)
 
     @NotBlank
-    @Size(min =3, max =100)
-    private  String nombres;
+    @Size(min = 3, max = 100) // Longitud entre 3 y 100 caracteres
+    private String nombres; // Nombre del cliente
 
     @NotBlank
     @Column(unique = true, length = 15)
-    private String documento;
+    // Debe ser único y con máximo 15 caracteres
+    private String documento; // DNI o RUC
 
     @NotBlank
     @Pattern(regexp = "\\d{9}")
-    private String telefono;
+    // Solo permite exactamente 9 dígitos
+    private String telefono; // Número de teléfono
 
     public Cliente() {
     }

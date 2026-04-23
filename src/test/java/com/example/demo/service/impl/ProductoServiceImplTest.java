@@ -13,15 +13,15 @@ import static org.mockito.Mockito.*;
 
 class ProductoServiceImplTest {
 
-    @Mock
+    @Mock // Simula el repositorio
     private ProductoRepository repository;
 
-    @InjectMocks
+    @InjectMocks // Inyecta el mock en el servicio
     private ProductoServiceImpl service;
 
-    private Producto producto;
+    private Producto producto; // Objeto base de prueba
 
-    @BeforeEach
+    @BeforeEach // Se ejecuta antes de cada test
     void setUp() {
         MockitoAnnotations.openMocks(this);
 
@@ -31,10 +31,10 @@ class ProductoServiceImplTest {
         producto.setDescripcion("Laptop Gamer");
         producto.setPrecio(2500.0);
         producto.setStock(10);
-        producto.setCategoria(null); // ajusta si tienes objeto Categoria
+        producto.setCategoria(null); // puedes mockear Categoria si quieres subir nivel
     }
 
-    @Test
+    @Test // Prueba listar()
     void testListar() {
         when(repository.findAll()).thenReturn(Arrays.asList(producto));
 
@@ -42,10 +42,11 @@ class ProductoServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
+
         verify(repository, times(1)).findAll();
     }
 
-    @Test
+    @Test // Prueba guardar()
     void testGuardar() {
         when(repository.save(any(Producto.class))).thenReturn(producto);
 
@@ -53,10 +54,11 @@ class ProductoServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals("Laptop", resultado.getNombre());
+
         verify(repository, times(1)).save(producto);
     }
 
-    @Test
+    @Test // Prueba obtener cuando existe
     void testObtener_existente() {
         when(repository.findById(1L)).thenReturn(Optional.of(producto));
 
@@ -64,20 +66,22 @@ class ProductoServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
+
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test
+    @Test // Prueba obtener cuando NO existe
     void testObtener_noExistente() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         Producto resultado = service.obtener(1L);
 
-        assertNull(resultado);
+        assertNull(resultado); // según tu lógica actual
+
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test
+    @Test // Prueba actualizar cuando existe
     void testActualizar_existente() {
         Producto nuevosDatos = new Producto();
         nuevosDatos.setNombre("PC");
@@ -87,10 +91,14 @@ class ProductoServiceImplTest {
         nuevosDatos.setCategoria(null);
 
         when(repository.findById(1L)).thenReturn(Optional.of(producto));
-        when(repository.save(any(Producto.class))).thenReturn(producto);
+
+        // 🔥 CORRECCIÓN IMPORTANTE:
+        // devolver el objeto actualizado, no el viejo
+        when(repository.save(any(Producto.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Producto resultado = service.actualizar(1L, nuevosDatos);
 
+        // Validaciones
         assertNotNull(resultado);
         assertEquals("PC", resultado.getNombre());
         assertEquals("PC de escritorio", resultado.getDescripcion());
@@ -101,18 +109,19 @@ class ProductoServiceImplTest {
         verify(repository).save(producto);
     }
 
-    @Test
+    @Test // Prueba actualizar cuando NO existe
     void testActualizar_noExistente() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         Producto resultado = service.actualizar(1L, producto);
 
         assertNull(resultado);
+
         verify(repository).findById(1L);
         verify(repository, never()).save(any());
     }
 
-    @Test
+    @Test // Prueba eliminar()
     void testEliminar() {
         doNothing().when(repository).deleteById(1L);
 

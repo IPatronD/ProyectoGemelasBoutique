@@ -15,60 +15,72 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Habilita Mockito en JUnit 5
 class MetodoPagoServiceImplTest {
 
-    @Mock
+    @Mock // Simula el repositorio
     private MetodoPagoRepository repository;
 
-    @InjectMocks
+    @InjectMocks // Inyecta el mock en el servicio
     private MetodoPagoServiceImpl service;
 
-    private MetodoPago metodo;
+    private MetodoPago metodo; // Objeto de prueba
 
-    @BeforeEach
+    @BeforeEach // Se ejecuta antes de cada test
     void setUp() {
         metodo = new MetodoPago();
         metodo.setId(1L);
         metodo.setNombre("Efectivo");
     }
 
-    @Test
+    @Test // Prueba listar()
     void listar() {
+        // Simula lista con un elemento
         when(repository.findAll()).thenReturn(Arrays.asList(metodo));
 
         var lista = service.listar();
 
+        // Validación
         assertEquals(1, lista.size());
+
         verify(repository).findAll();
     }
 
-    @Test
+    @Test // Prueba guardar()
     void guardar() {
-        when(repository.save(metodo)).thenReturn(metodo);
+        // Mejor usar any() para mayor flexibilidad
+        when(repository.save(any(MetodoPago.class))).thenReturn(metodo);
 
         MetodoPago resultado = service.guardar(metodo);
 
+        // Validaciones
         assertNotNull(resultado);
         assertEquals("Efectivo", resultado.getNombre());
+
         verify(repository).save(metodo);
     }
 
-    @Test
+    @Test // Prueba actualizar()
     void actualizar() {
         MetodoPago nuevo = new MetodoPago();
         nuevo.setNombre("Yape");
 
+        // Simula que encuentra el método existente
         when(repository.findById(1L)).thenReturn(Optional.of(metodo));
-        when(repository.save(any(MetodoPago.class))).thenReturn(metodo);
+
+        // Devolver el mismo objeto actualizado
+        when(repository.save(any(MetodoPago.class))).thenAnswer(inv -> inv.getArgument(0));
 
         MetodoPago resultado = service.actualizar(1L, nuevo);
 
+        // Validaciones
         assertEquals("Yape", resultado.getNombre());
+
         verify(repository).findById(1L);
         verify(repository).save(metodo);
     }
 
-    @Test
+    @Test // Prueba eliminar()
     void eliminar() {
         service.eliminar(1L);
 

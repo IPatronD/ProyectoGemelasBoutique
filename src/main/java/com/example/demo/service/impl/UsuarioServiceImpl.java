@@ -30,6 +30,23 @@ public class UsuarioServiceImpl implements UsuarioService {
     }
 
     @Override
+    public Usuario actualizar(Long id, Usuario usuario) {
+        Usuario existente = repository.findById(id).orElse(null);
+
+        if (existente != null) {
+            existente.setNombres(usuario.getNombres());
+            existente.setApellidos(usuario.getApellidos());
+            existente.setDni(usuario.getDni());
+            existente.setCorreo(usuario.getCorreo());
+            existente.setEmpleado(usuario.getEmpleado());
+
+            return repository.save(existente);
+        }
+
+        return null; // o lanzar excepción
+    }
+
+    @Override
     public void eliminar(Long id){
         repository.deleteById(id);
     }

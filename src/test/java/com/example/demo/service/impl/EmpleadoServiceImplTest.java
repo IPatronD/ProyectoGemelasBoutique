@@ -16,14 +16,16 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
+// Habilita Mockito en JUnit 5
 class EmpleadoServiceImplTest {
 
-    @Mock
+    @Mock // Simula el repositorio
     private EmpleadoRepository repository;
 
-    @InjectMocks
+    @InjectMocks // Inyecta el mock en el servicio
     private EmpleadoServiceImpl service;
 
+    // Método helper para crear empleados de prueba
     private Empleado crearEmpleado(Long id) {
         return new Empleado(
                 id,
@@ -34,35 +36,42 @@ class EmpleadoServiceImplTest {
         );
     }
 
-    @Test
+    @Test // Prueba listar()
     void listarDebeRetornarListaDeEmpleados() {
         Empleado e1 = crearEmpleado(1L);
         Empleado e2 = crearEmpleado(2L);
 
+        // Simula lista de empleados
         when(repository.findAll()).thenReturn(Arrays.asList(e1, e2));
 
         List<Empleado> resultado = service.listar();
 
+        // Validaciones
         assertEquals(2, resultado.size());
+
+        // Verifica llamada
         verify(repository, times(1)).findAll();
     }
 
-    @Test
+    @Test // Prueba guardar()
     void guardarDebePersistirEmpleado() {
-        Empleado empleado = crearEmpleado(null);
-        Empleado empleadoGuardado = crearEmpleado(1L);
+        Empleado empleado = crearEmpleado(null); // sin ID (nuevo)
+        Empleado empleadoGuardado = crearEmpleado(1L); // con ID (guardado)
 
+        // Simula guardado
         when(repository.save(empleado)).thenReturn(empleadoGuardado);
 
         Empleado resultado = service.guardar(empleado);
 
+        // Validaciones
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
         assertEquals("Diego", resultado.getNombres());
+
         verify(repository, times(1)).save(empleado);
     }
 
-    @Test
+    @Test // Prueba obtener cuando existe
     void obtenerDebeRetornarEmpleadoCuandoExiste() {
         Empleado empleado = crearEmpleado(1L);
 
@@ -72,20 +81,22 @@ class EmpleadoServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals("Diego", resultado.getNombres());
+
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test
+    @Test // Prueba obtener cuando NO existe
     void obtenerDebeRetornarNullCuandoNoExiste() {
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         Empleado resultado = service.obtener(1L);
 
-        assertNull(resultado);
+        assertNull(resultado); // según tu lógica actual
+
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test
+    @Test // Prueba eliminar()
     void eliminarDebeLlamarAlRepositorio() {
         doNothing().when(repository).deleteById(1L);
 

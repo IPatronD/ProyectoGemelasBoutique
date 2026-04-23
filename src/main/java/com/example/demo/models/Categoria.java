@@ -7,21 +7,22 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 //BY JAMES
 
-@Entity
-@Table(name = "categorias")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Entity // Indica que esta clase es una entidad de base de datos
+@Table(name = "categorias") // Define el nombre de la tabla en la BD
+@Data // Genera automáticamente getters, setters, toString, equals, etc.
+@NoArgsConstructor // Constructor vacío
+@AllArgsConstructor // Constructor con todos los atributos
 public class Categoria {
 
-    @Id
+    @Id // Define la clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // El ID se genera automáticamente (auto-incremental)
     private Long id;
 
-    @NotNull
-    @Column(name = "nombre")
+    @NotNull // Valida que el campo no sea nulo
+    @Column(name = "nombre") // Mapea la columna "nombre" en la tabla
     private String nombre;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion") // Mapea la columna "descripcion"
     private String descripcion;
 }

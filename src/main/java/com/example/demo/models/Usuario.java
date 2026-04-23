@@ -3,36 +3,44 @@ package com.example.demo.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-@Entity
-@Table(name = "usuarios")
+@Entity // Indica que esta clase es una entidad de base de datos
+@Table(name = "usuarios") // Nombre de la tabla en la BD
 public class Usuario {
 
-    @Id
+    @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // ID autogenerado (auto-incremental)
     private Long id;
 
     @NotBlank(message = "Los nombres son obligatorios")
+    // No permite valores vacíos o null
     @Size(min = 3, max = 50)
-    private String nombres;
+    // Longitud entre 3 y 50 caracteres
+    private String nombres; // Nombres del usuario
 
     @NotBlank(message = "Los apellidos son obligatorios")
     @Size(min = 3, max = 50)
-    private String apellidos;
+    private String apellidos; // Apellidos del usuario
 
     @NotBlank(message = "El DNI es obligatorio")
     @Column(unique = true, length = 8)
+    // Debe ser único y de 8 caracteres
     @Pattern(regexp = "\\d{8}", message = "El DNI debe tener 8 dígitos")
+    // Solo permite exactamente 8 números
     private String dni;
 
     @NotBlank(message = "El correo es obligatorio")
     @Email(message = "Correo inválido")
+    // Valida formato de correo
     @Column(unique = true)
+    // El correo debe ser único
     private String correo;
 
     @OneToOne
+    // Relación uno a uno con Empleado
     @JoinColumn(name = "empleado_id")
+    // Columna que conecta con la tabla empleados
     private Empleado empleado;
-
     public Usuario() {
     }
 
