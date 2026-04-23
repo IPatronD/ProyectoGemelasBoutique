@@ -9,7 +9,7 @@ public class Usuario {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank(message = "Los nombres son obligatorios")
     @Size(min = 3, max = 50)
@@ -36,7 +36,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public Usuario(long id, String nombres, String apellidos, String dni, String correo, Empleado empleado) {
+    public Usuario(Long id, String nombres, String apellidos, String dni, String correo, Empleado empleado) {
         this.id = id;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -45,11 +45,11 @@ public class Usuario {
         this.empleado = empleado;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

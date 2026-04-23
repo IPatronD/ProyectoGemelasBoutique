@@ -9,7 +9,7 @@ public class Empleado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     @Size(min = 3, max = 50)
@@ -35,7 +35,7 @@ public class Empleado {
     public Empleado() {
     }
 
-    public Empleado(long id, String nombres, String apellidos, String dni, String correo) {
+    public Empleado(Long id, String nombres, String apellidos, String dni, String correo) {
         this.id = id;
         this.nombres = nombres;
         this.apellidos = apellidos;
@@ -43,11 +43,11 @@ public class Empleado {
         this.correo = correo;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
