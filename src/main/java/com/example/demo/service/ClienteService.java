@@ -1,9 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.models.Cliente;
-import com.example.demo.models.Empleado;
 import com.example.demo.repository.ClienteRepository;
-import com.example.demo.repository.EmpleadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +28,3 @@ public class ClienteService {
         repository.deleteById(id);
     }
 }
-
-
