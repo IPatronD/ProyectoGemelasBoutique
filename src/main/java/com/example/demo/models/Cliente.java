@@ -8,7 +8,7 @@ import jakarta.validation.constraints.*;
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @NotBlank
     @Size (min =3, max =50)
@@ -29,18 +29,18 @@ public class Cliente {
     public Cliente() {
     }
 
-    public Cliente(long id, String tipo, String nombres, String documento, String telefono) {
+    public Cliente(Long id, String tipo, String nombres, String documento, String telefono) {
         this.id = id;
         this.tipo = tipo;
         this.nombres= nombres;
         this.documento = documento;
         this.telefono = telefono;
     }
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
