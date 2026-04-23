@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class ClienteServiceImpl implements ClienteService {
+public class ClienteServiceImpl extends ClienteService {
 
     @Autowired
     private ClienteRepository repository;
