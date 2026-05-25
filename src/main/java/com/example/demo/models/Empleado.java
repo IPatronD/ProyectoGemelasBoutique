@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -34,7 +36,7 @@ public class Empleado {
     private String correo;
 
     @OneToOne(mappedBy = "empleado")
-    // Relación uno a uno con Usuario
+    @JsonBackReference
     private Usuario usuario;
 
     public Empleado() {

@@ -36,4 +36,8 @@ public class Venta {
     // Columna que conecta con la tabla usuarios
     private Usuario usuario;
 
+    @ManyToOne
+    @JoinColumn(name = "metodo_pago_id")
+    private MetodoPago metodoPago;
+
 }

@@ -7,38 +7,74 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Indica que es un controlador REST (responde con JSON)
-@RequestMapping("/api/empleados") // Ruta base para los endpoints
+@RestController
+@RequestMapping("/api/empleados")
 public class EmpleadoController {
 
-    @Autowired // Inyección automática del servicio
+    @Autowired
     private EmpleadoService service;
 
-    @GetMapping // Endpoint GET -> listar todos los empleados
+    // ==========================
+    // CRUD
+    // ==========================
+
+    @GetMapping
     public List<Empleado> listar() {
-        return service.listar(); // Llama al servicio para obtener la lista
+        return service.listar();
     }
 
-    @PostMapping // Endpoint POST -> guardar un nuevo empleado
+    @PostMapping
     public Empleado guardar(@RequestBody Empleado empleado) {
-        // @RequestBody convierte el JSON en objeto Empleado
-        return service.guardar(empleado); // Guarda el empleado
+        return service.guardar(empleado);
     }
 
-    @GetMapping("/{id}") // Endpoint GET -> obtener empleado por ID
+    @GetMapping("/{id}")
     public Empleado obtener(@PathVariable Long id) {
-        // @PathVariable obtiene el ID desde la URL
-        return service.obtener(id); // Busca el empleado
+        return service.obtener(id);
     }
 
-    @PutMapping("/{id}") // Endpoint PUT -> actualizar un empleado
-    public Empleado actualizar(@PathVariable Long id, @RequestBody Empleado empleado) {
-        empleado.setId(id); // Asigna el ID recibido al objeto
-        return service.guardar(empleado); // Reutiliza guardar para actualizar
+    @PutMapping("/{id}")
+    public Empleado actualizar(@PathVariable Long id,
+            @RequestBody Empleado empleado) {
+        return service.actualizar(id, empleado);
     }
 
-    @DeleteMapping("/{id}") // Endpoint DELETE -> eliminar empleado por ID
+    @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id) {
-        service.eliminar(id); // Elimina el empleado
+        service.eliminar(id);
+    }
+
+    // ==========================
+    // CONSULTAS PERSONALIZADAS
+    // ==========================
+
+    @GetMapping("/dni/{dni}")
+    public Empleado buscarPorDni(@PathVariable String dni) {
+        return service.buscarPorDni(dni);
+    }
+
+    @GetMapping("/correo/{correo}")
+    public Empleado buscarPorCorreo(@PathVariable String correo) {
+        return service.buscarPorCorreo(correo);
+    }
+
+    @GetMapping("/apellidos/{apellidos}")
+    public List<Empleado> buscarPorApellidos(@PathVariable String apellidos) {
+        return service.buscarPorApellidos(apellidos);
+    }
+
+    @GetMapping("/nombre/{nombre}")
+    public List<Empleado> buscarPorNombre(@PathVariable String nombre) {
+        return service.buscarPorNombre(nombre);
+    }
+
+    @GetMapping("/existe-dni/{dni}")
+    public boolean existeDni(@PathVariable String dni) {
+        return service.existeDni(dni);
+    }
+
+    @GetMapping("/existe-correo/{correo}")
+    public boolean existeCorreo(@PathVariable String correo) {
+        return service.existeCorreo(correo);
     }
 }

@@ -14,4 +14,12 @@ public interface UsuarioService {
     Usuario actualizar(Long id, Usuario usuario);
 
     void eliminar(Long id);
+
+    Usuario buscarPorUsername(String username);
+
+    List<Usuario> buscarPorRol(String rol);
+
+    List<Usuario> listarActivos();
+
+    boolean existeUsername(String username);
 }

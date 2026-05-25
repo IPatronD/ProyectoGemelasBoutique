@@ -36,10 +36,11 @@ public class Cliente {
     public Cliente(Long id, String tipo, String nombres, String documento, String telefono) {
         this.id = id;
         this.tipo = tipo;
-        this.nombres= nombres;
+        this.nombres = nombres;
         this.documento = documento;
         this.telefono = telefono;
     }
+
     public Long getId() {
         return id;
     }
@@ -57,28 +58,26 @@ public class Cliente {
     }
 
     public String getNombres() {
-    return nombres;
+        return nombres;
     }
 
     public void setNombres(String nombres) {
-    this.nombres = nombres;
+        this.nombres = nombres;
     }
 
     public String getDocumento() {
-    return documento;
+        return documento;
     }
 
     public void setDocumento(String documento) {
-    this.documento = documento;
+        this.documento = documento;
     }
 
     public String getTelefono() {
-    return telefono;
+        return telefono;
     }
 
     public void setTelefono(String telefono) {
-    this.telefono = telefono;
+        this.telefono = telefono;
     }
 }
-
-

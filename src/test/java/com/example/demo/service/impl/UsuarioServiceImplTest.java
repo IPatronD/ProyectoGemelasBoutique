@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-// Habilita Mockito en JUnit 5
+// Habilita Mockito para JUnit 5
 class UsuarioServiceImplTest {
 
     @Mock // Simula el repositorio
@@ -25,20 +25,20 @@ class UsuarioServiceImplTest {
     @InjectMocks // Inyecta el mock en el servicio
     private UsuarioServiceImpl service;
 
-    // Método helper para crear usuarios de prueba
+    // Crea usuarios de prueba
     private Usuario crearUsuario(Long id) {
         return new Usuario(
                 id,
-                "Diego",
-                "Cabanillas",
-                "12345678",
-                "diego@mail.com",
-                null
-        );
+                "dcabanillas",
+                "123456",
+                "ADMIN",
+                true,
+                null);
     }
 
-    @Test // Prueba listar()
+    @Test
     void listarDebeRetornarListaDeUsuarios() {
+
         Usuario u1 = crearUsuario(1L);
         Usuario u2 = crearUsuario(2L);
 
@@ -51,8 +51,9 @@ class UsuarioServiceImplTest {
         verify(repository, times(1)).findAll();
     }
 
-    @Test // Prueba guardar()
+    @Test
     void guardarDebePersistirUsuario() {
+
         Usuario usuario = crearUsuario(null);
         Usuario usuarioGuardado = crearUsuario(1L);
 
@@ -62,13 +63,14 @@ class UsuarioServiceImplTest {
 
         assertNotNull(resultado);
         assertEquals(1L, resultado.getId());
-        assertEquals("Diego", resultado.getNombres());
+        assertEquals("dcabanillas", resultado.getUsername());
 
         verify(repository, times(1)).save(usuario);
     }
 
-    @Test // Prueba obtener cuando existe
+    @Test
     void obtenerDebeRetornarUsuarioCuandoExiste() {
+
         Usuario usuario = crearUsuario(1L);
 
         when(repository.findById(1L)).thenReturn(Optional.of(usuario));
@@ -76,13 +78,14 @@ class UsuarioServiceImplTest {
         Usuario resultado = service.obtener(1L);
 
         assertNotNull(resultado);
-        assertEquals("Diego", resultado.getNombres());
+        assertEquals("dcabanillas", resultado.getUsername());
 
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test // Prueba obtener cuando NO existe
+    @Test
     void obtenerDebeRetornarNullCuandoNoExiste() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         Usuario resultado = service.obtener(1L);
@@ -92,28 +95,31 @@ class UsuarioServiceImplTest {
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test // 🔥 TE FALTABA ESTE: actualizar()
+    @Test
     void actualizarDebeModificarUsuarioCuandoExiste() {
+
         Usuario existente = crearUsuario(1L);
         Usuario nuevosDatos = crearUsuario(null);
-        nuevosDatos.setNombres("Carlos");
+
+        nuevosDatos.setUsername("carlos");
 
         when(repository.findById(1L)).thenReturn(Optional.of(existente));
 
-        // Devuelve el objeto actualizado
-        when(repository.save(any(Usuario.class))).thenAnswer(inv -> inv.getArgument(0));
+        when(repository.save(any(Usuario.class)))
+                .thenAnswer(inv -> inv.getArgument(0));
 
         Usuario resultado = service.actualizar(1L, nuevosDatos);
 
         assertNotNull(resultado);
-        assertEquals("Carlos", resultado.getNombres());
+        assertEquals("carlos", resultado.getUsername());
 
         verify(repository).findById(1L);
         verify(repository).save(existente);
     }
 
-    @Test // Caso cuando NO existe
+    @Test
     void actualizarDebeRetornarNullCuandoNoExiste() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
         Usuario resultado = service.actualizar(1L, crearUsuario(null));
@@ -124,8 +130,9 @@ class UsuarioServiceImplTest {
         verify(repository, never()).save(any());
     }
 
-    @Test // Prueba eliminar()
+    @Test
     void eliminarDebeLlamarAlRepositorio() {
+
         doNothing().when(repository).deleteById(1L);
 
         service.eliminar(1L);
