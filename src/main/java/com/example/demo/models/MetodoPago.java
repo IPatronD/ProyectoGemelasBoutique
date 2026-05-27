@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -27,4 +29,7 @@ public class MetodoPago {
         this.id = id;
         this.nombre = nombre;
     }
+
+    @OneToMany(mappedBy = "metodoPago")
+    private List<Venta> ventas;
 }
