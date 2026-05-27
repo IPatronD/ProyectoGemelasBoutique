@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -25,4 +27,7 @@ public class Categoria {
 
     @Column(name = "descripcion") // Mapea la columna "descripcion"
     private String descripcion;
+
+    @OneToMany(mappedBy = "categoria")
+    private List<Producto> productos;
 }
