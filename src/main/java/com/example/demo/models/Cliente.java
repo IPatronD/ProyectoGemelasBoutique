@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
@@ -29,6 +31,9 @@ public class Cliente {
     @Pattern(regexp = "\\d{9}")
     // Solo permite exactamente 9 dígitos
     private String telefono; // Número de teléfono
+
+    @OneToMany(mappedBy = "cliente")
+    private List<Venta> ventas;
 
     public Cliente() {
     }
