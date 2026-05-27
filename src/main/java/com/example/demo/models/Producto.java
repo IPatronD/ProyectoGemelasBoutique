@@ -1,5 +1,7 @@
 package com.example.demo.models;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -39,4 +41,7 @@ public class Producto {
     @JoinColumn(name = "categoria_id")
     // Columna que conecta con la tabla categorias
     private Categoria categoria; // Categoría del producto
+
+    @OneToMany(mappedBy = "producto")
+    private List<DetalleVenta> detallesVenta;
 }
