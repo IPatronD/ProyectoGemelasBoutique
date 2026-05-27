@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity // Indica que esta clase es una entidad de base de datos
 @Table(name = "ventas") // Nombre de la tabla en la BD
@@ -40,4 +41,10 @@ public class Venta {
     @JoinColumn(name = "metodo_pago_id")
     private MetodoPago metodoPago;
 
+    @ManyToOne
+    @JoinColumn(name = "empleado_id")
+    private Empleado empleado;
+
+    @OneToMany(mappedBy = "venta")
+    private List<DetalleVenta> detalles;
 }
