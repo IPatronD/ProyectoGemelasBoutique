@@ -1,11 +1,11 @@
 package com.example.demo.service.impl;
 
-import java.util.List;
-import org.springframework.stereotype.Service;
 import com.example.demo.models.DetalleVenta;
 import com.example.demo.repository.DetalleVentaRepository;
 import com.example.demo.service.DetalleVentaService;
+import org.springframework.stereotype.Service;
 
+import java.util.List;
 
 @Service
 public class DetalleVentaServiceImpl implements DetalleVentaService {
@@ -28,11 +28,34 @@ public class DetalleVentaServiceImpl implements DetalleVentaService {
 
     @Override
     public DetalleVenta obtenerPorId(Long id) {
-        return repository.findById(id).orElseThrow();
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Detalle de venta no encontrado"));
+    }
+
+    @Override
+    public DetalleVenta actualizar(Long id, DetalleVenta detalleVentaDetails) {
+
+        DetalleVenta detalleVenta = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Detalle de venta no encontrado"));
+
+        detalleVenta.setVenta(detalleVentaDetails.getVenta());
+        detalleVenta.setProducto(detalleVentaDetails.getProducto());
+        detalleVenta.setCantidad(detalleVentaDetails.getCantidad());
+        detalleVenta.setPrecio(detalleVentaDetails.getPrecio());
+
+        return repository.save(detalleVenta);
     }
 
     @Override
     public void eliminar(Long id) {
-        repository.deleteById(id);
+
+        DetalleVenta detalleVenta = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Detalle de venta no encontrado"));
+
+        repository.delete(detalleVenta);
     }
 }

@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.models.Empleado;
 import com.example.demo.repository.EmpleadoRepository;
 import com.example.demo.service.EmpleadoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class EmpleadoServiceImpl implements EmpleadoService {
 
-    @Autowired
-    private EmpleadoRepository repository;
+    private final EmpleadoRepository repository;
+
+    public EmpleadoServiceImpl(EmpleadoRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Empleado> listar() {
@@ -21,49 +23,70 @@ public class EmpleadoServiceImpl implements EmpleadoService {
 
     @Override
     public Empleado guardar(Empleado empleado) {
+
+        // Validar DNI repetido
+        if (repository.existsByDni(empleado.getDni())) {
+            throw new RuntimeException("El DNI ya existe");
+        }
+
+        // Validar correo repetido
+        if (repository.existsByCorreo(empleado.getCorreo())) {
+            throw new RuntimeException("El correo ya existe");
+        }
+
         return repository.save(empleado);
     }
 
     @Override
     public Empleado obtener(Long id) {
-        return repository.findById(id).orElse(null);
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Empleado no encontrado"));
     }
 
     @Override
     public Empleado actualizar(Long id, Empleado empleado) {
 
-        Empleado existente = repository.findById(id).orElse(null);
+        Empleado existente = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Empleado no encontrado"));
 
-        if (existente != null) {
+        existente.setNombres(empleado.getNombres());
+        existente.setApellidos(empleado.getApellidos());
+        existente.setDni(empleado.getDni());
+        existente.setCorreo(empleado.getCorreo());
+        existente.setEstado(empleado.isEstado());
 
-            existente.setNombres(empleado.getNombres());
-            existente.setApellidos(empleado.getApellidos());
-            existente.setDni(empleado.getDni());
-            existente.setCorreo(empleado.getCorreo());
-
-            return repository.save(existente);
-        }
-
-        return null;
+        return repository.save(existente);
     }
 
     @Override
     public void eliminar(Long id) {
-        repository.deleteById(id);
+
+        Empleado empleado = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Empleado no encontrado"));
+
+        repository.delete(empleado);
     }
 
-    // ==========================
     // CONSULTAS PERSONALIZADAS
-    // ==========================
 
     @Override
     public Empleado buscarPorDni(String dni) {
-        return repository.findByDni(dni).orElse(null);
+
+        return repository.findByDni(dni)
+                .orElseThrow(() ->
+                        new RuntimeException("Empleado no encontrado"));
     }
 
     @Override
     public Empleado buscarPorCorreo(String correo) {
-        return repository.findByCorreo(correo).orElse(null);
+
+        return repository.findByCorreo(correo)
+                .orElseThrow(() ->
+                        new RuntimeException("Empleado no encontrado"));
     }
 
     @Override

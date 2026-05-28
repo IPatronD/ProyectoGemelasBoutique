@@ -1,8 +1,8 @@
 package com.example.demo.service;
 
-import java.util.List;
 import com.example.demo.models.DetalleVenta;
 
+import java.util.List;
 
 public interface DetalleVentaService {
 
@@ -11,6 +11,8 @@ public interface DetalleVentaService {
     DetalleVenta guardar(DetalleVenta detalleVenta);
 
     DetalleVenta obtenerPorId(Long id);
+
+    DetalleVenta actualizar(Long id, DetalleVenta detalleVentaDetails);
 
     void eliminar(Long id);
 }

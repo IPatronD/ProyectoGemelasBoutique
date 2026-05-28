@@ -1,42 +1,51 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-//BY JAMES
 
-@Entity // Indica que esta clase es una entidad de base de datos
-@Table(name = "productos") // Nombre de la tabla en la BD
-@Data // Genera getters, setters, toString, equals, etc.
-@NoArgsConstructor // Constructor vacío
-@AllArgsConstructor // Constructor con todos los atributos
+import java.util.List;
+
+@Entity // Entidad de la BD
+@Table(name = "productos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Producto {
 
     @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // ID autogenerado (auto-incremental)
     private Long id;
 
-    @NotNull // No permite valores null
-    @Column(name = "nombre") // Columna "nombre" en la BD
-    private String nombre; // Nombre del producto
+    @NotBlank(message = "El nombre es obligatorio")
+    @Column(nullable = false, unique = true, length = 100)
+    // Nombre del producto
+    private String nombre;
 
-    @Column(name = "descripcion") // Columna "descripcion"
-    private String descripcion; // Descripción del producto
+    @Column(length = 255)
+    // Descripción del producto
+    private String descripcion;
 
-    @NotNull
-    @Column(name = "precio") // Columna "precio"
-    private double precio; // Precio del producto
+    @Positive(message = "El precio debe ser mayor a 0")
+    @Column(nullable = false)
+    // Precio del producto
+    private double precio;
 
-    @NotNull
-    @Column(name = "stock") // Columna "stock"
-    private int stock; // Cantidad disponible en inventario
+    @PositiveOrZero(message = "El stock no puede ser negativo")
+    @Column(nullable = false)
+    // Cantidad disponible
+    private int stock;
 
     @ManyToOne
-    // Relación muchos a uno: muchos productos pertenecen a una categoría
-    @JoinColumn(name = "categoria_id")
-    // Columna que conecta con la tabla categorias
-    private Categoria categoria; // Categoría del producto
+    @JoinColumn(name = "categoria_id", nullable = false)
+    // Muchos productos pertenecen a una categoría
+    private Categoria categoria;
+
+    @OneToMany(mappedBy = "producto")
+    // Un producto puede estar en muchos detalles
+    @JsonIgnore // Evita bucle infinito
+    private List<DetalleVenta> detallesVenta;
 }

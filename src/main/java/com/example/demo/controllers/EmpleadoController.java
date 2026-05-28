@@ -2,79 +2,131 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Empleado;
 import com.example.demo.service.EmpleadoService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+// Controlador REST
 @RestController
+
+// Ruta base
 @RequestMapping("/api/empleados")
 public class EmpleadoController {
 
-    @Autowired
-    private EmpleadoService service;
+    // Servicio
+    private final EmpleadoService service;
 
-    // ==========================
+    // Constructor
+    public EmpleadoController(EmpleadoService service) {
+        this.service = service;
+    }
+
     // CRUD
-    // ==========================
 
+    // Listar empleados
     @GetMapping
-    public List<Empleado> listar() {
-        return service.listar();
+    public ResponseEntity<List<Empleado>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
+    // Guardar empleado
     @PostMapping
-    public Empleado guardar(@RequestBody Empleado empleado) {
-        return service.guardar(empleado);
+    public ResponseEntity<Empleado> guardar(
+            @Valid @RequestBody Empleado empleado) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(empleado));
     }
 
+    // Buscar empleado por id
     @GetMapping("/{id}")
-    public Empleado obtener(@PathVariable Long id) {
-        return service.obtener(id);
+    public ResponseEntity<Empleado> obtener(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.obtener(id));
     }
 
+    // Actualizar empleado
     @PutMapping("/{id}")
-    public Empleado actualizar(@PathVariable Long id,
-            @RequestBody Empleado empleado) {
-        return service.actualizar(id, empleado);
+    public ResponseEntity<Empleado> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Empleado empleado) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, empleado));
     }
 
+    // Eliminar empleado
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
         service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 
-    // ==========================
     // CONSULTAS PERSONALIZADAS
-    // ==========================
 
+    // Buscar por DNI
     @GetMapping("/dni/{dni}")
-    public Empleado buscarPorDni(@PathVariable String dni) {
-        return service.buscarPorDni(dni);
+    public ResponseEntity<Empleado> buscarPorDni(
+            @PathVariable String dni) {
+
+        return ResponseEntity.ok(
+                service.buscarPorDni(dni));
     }
 
+    // Buscar por correo
     @GetMapping("/correo/{correo}")
-    public Empleado buscarPorCorreo(@PathVariable String correo) {
-        return service.buscarPorCorreo(correo);
+    public ResponseEntity<Empleado> buscarPorCorreo(
+            @PathVariable String correo) {
+
+        return ResponseEntity.ok(
+                service.buscarPorCorreo(correo));
     }
 
+    // Buscar por apellidos
     @GetMapping("/apellidos/{apellidos}")
-    public List<Empleado> buscarPorApellidos(@PathVariable String apellidos) {
-        return service.buscarPorApellidos(apellidos);
+    public ResponseEntity<List<Empleado>> buscarPorApellidos(
+            @PathVariable String apellidos) {
+
+        return ResponseEntity.ok(
+                service.buscarPorApellidos(apellidos));
     }
 
+    // Buscar por nombre
     @GetMapping("/nombre/{nombre}")
-    public List<Empleado> buscarPorNombre(@PathVariable String nombre) {
-        return service.buscarPorNombre(nombre);
+    public ResponseEntity<List<Empleado>> buscarPorNombre(
+            @PathVariable String nombre) {
+
+        return ResponseEntity.ok(
+                service.buscarPorNombre(nombre));
     }
 
+    // Verificar DNI
     @GetMapping("/existe-dni/{dni}")
-    public boolean existeDni(@PathVariable String dni) {
-        return service.existeDni(dni);
+    public ResponseEntity<Boolean> existeDni(
+            @PathVariable String dni) {
+
+        return ResponseEntity.ok(
+                service.existeDni(dni));
     }
 
+    // Verificar correo
     @GetMapping("/existe-correo/{correo}")
-    public boolean existeCorreo(@PathVariable String correo) {
-        return service.existeCorreo(correo);
+    public ResponseEntity<Boolean> existeCorreo(
+            @PathVariable String correo) {
+
+        return ResponseEntity.ok(
+                service.existeCorreo(correo));
     }
 }

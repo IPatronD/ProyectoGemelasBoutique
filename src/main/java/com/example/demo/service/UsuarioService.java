@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.models.Usuario;
+
 import java.util.List;
 
 public interface UsuarioService {
@@ -14,6 +15,8 @@ public interface UsuarioService {
     Usuario actualizar(Long id, Usuario usuario);
 
     void eliminar(Long id);
+
+    // Consultas personalizadas
 
     Usuario buscarPorUsername(String username);
 

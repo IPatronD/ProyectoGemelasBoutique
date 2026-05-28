@@ -1,36 +1,74 @@
 package com.example.demo.controllers;
+
 import com.example.demo.models.Cliente;
 import com.example.demo.service.ClienteService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
-@RestController // Indica que es un controlador REST que responde con datos (JSON)
-@RequestMapping("/api/clientes") // Ruta base para todos los endpoints
+// Controlador REST
+@RestController
+
+// Ruta base
+@RequestMapping("/api/clientes")
 public class ClienteController {
 
-    @Autowired // Inyección automática del servicio
-    private ClienteService clienteService;
+    // Servicio de cliente
+    private final ClienteService service;
 
-    @GetMapping // Endpoint GET -> listar todos los clientes
-    public List<Cliente> listar() {
-        return clienteService.listar(); // Llama al servicio para obtener la lista
+    // Constructor
+    public ClienteController(ClienteService service) {
+        this.service = service;
     }
 
-    @PostMapping // Endpoint POST -> guardar un nuevo cliente
-    public Cliente guardar(@RequestBody Cliente cliente) {
-        // @RequestBody convierte el JSON en objeto Cliente
-        return clienteService.guardar(cliente); // Guarda el cliente
+    // Listar clientes
+    @GetMapping
+    public ResponseEntity<List<Cliente>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    @GetMapping("/{id}") // Endpoint GET -> buscar cliente por ID
-    public Cliente buscar(@PathVariable Long id) {
-        // @PathVariable obtiene el ID desde la URL
-        return clienteService.buscarPorId(id); // Busca el cliente
+    // Guardar cliente
+    @PostMapping
+    public ResponseEntity<Cliente> guardar(
+            @Valid @RequestBody Cliente cliente) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(cliente));
     }
 
-    @DeleteMapping("/{id}") // Endpoint DELETE -> eliminar cliente por ID
-    public void eliminar(@PathVariable Long id) {
-        clienteService.eliminar(id); // Elimina el cliente
+    // Buscar cliente por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Cliente> buscar(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.buscarPorId(id));
+    }
+
+    // Actualizar cliente
+    @PutMapping("/{id}")
+    public ResponseEntity<Cliente> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Cliente cliente) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, cliente));
+    }
+
+    // Eliminar cliente
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

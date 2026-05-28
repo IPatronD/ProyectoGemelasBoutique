@@ -1,40 +1,74 @@
 package com.example.demo.controllers;
 
-import java.util.List;
-import org.springframework.web.bind.annotation.*;
 import com.example.demo.models.DetalleVenta;
 import com.example.demo.service.DetalleVentaService;
 
-@RestController // Define que es un controlador REST (responde en JSON)
-@RequestMapping("/api/detalle-ventas") // Ruta base de los endpoints
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+// Controlador REST
+@RestController
+
+// Ruta base
+@RequestMapping("/api/detalle-ventas")
 public class DetalleVentaController {
 
+    // Servicio
     private final DetalleVentaService service;
 
-    // Constructor para inyección de dependencias (forma recomendada)
+    // Constructor
     public DetalleVentaController(DetalleVentaService service) {
         this.service = service;
     }
 
-    @GetMapping // Endpoint GET -> listar todos los detalles de venta
-    public List<DetalleVenta> listar() {
-        return service.listar(); // Obtiene la lista desde el servicio
+    // Listar detalles
+    @GetMapping
+    public ResponseEntity<List<DetalleVenta>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    @PostMapping // Endpoint POST -> guardar un nuevo detalle de venta
-    public DetalleVenta guardar(@RequestBody DetalleVenta detalleVenta) {
-        // @RequestBody convierte el JSON en objeto DetalleVenta
-        return service.guardar(detalleVenta); // Guarda el detalle
+    // Guardar detalle
+    @PostMapping
+    public ResponseEntity<DetalleVenta> guardar(
+            @Valid @RequestBody DetalleVenta detalleVenta) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(detalleVenta));
     }
 
-    @GetMapping("/{id}") // Endpoint GET -> obtener un detalle por ID
-    public DetalleVenta obtenerPorId(@PathVariable Long id) {
-        // @PathVariable obtiene el ID desde la URL
-        return service.obtenerPorId(id); // Busca el detalle
+    // Buscar detalle por id
+    @GetMapping("/{id}")
+    public ResponseEntity<DetalleVenta> obtenerPorId(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.obtenerPorId(id));
     }
 
-    @DeleteMapping("/{id}") // Endpoint DELETE -> eliminar por ID
-    public void eliminar(@PathVariable Long id) {
-        service.eliminar(id); // Elimina el detalle
+    // Actualizar detalle
+    @PutMapping("/{id}")
+    public ResponseEntity<DetalleVenta> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody DetalleVenta detalleVenta) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, detalleVenta));
+    }
+
+    // Eliminar detalle
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

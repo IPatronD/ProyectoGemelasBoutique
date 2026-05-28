@@ -2,32 +2,63 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Venta;
 import com.example.demo.service.VentaService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController // Indica que es un controlador REST (responde en JSON)
-@RequestMapping("/api/ventas") // Ruta base: /api/ventas
+// Controlador REST
+@RestController
+
+// Ruta base
+@RequestMapping("/api/ventas")
 public class VentaController {
 
-    @Autowired // Inyección automática del servicio
-    private VentaService service;
+    // Servicio
+    private final VentaService service;
 
-    @GetMapping // Endpoint GET -> listar todas las ventas
-    public List<Venta> listar() {
-        return service.listar(); // Obtiene la lista desde el servicio
+    // Constructor
+    public VentaController(VentaService service) {
+        this.service = service;
     }
 
-    @PostMapping // Endpoint POST -> guardar una nueva venta
-    public Venta guardar(@RequestBody Venta venta) {
-        // Convierte el JSON en un objeto Venta
-        return service.guardar(venta); // Guarda la venta
+    // Listar ventas
+    @GetMapping
+    public ResponseEntity<List<Venta>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    @GetMapping("/{id}") // Endpoint GET -> obtener una venta por ID
-    public Venta obtener(@PathVariable Long id) {
-        // Captura el ID desde la URL
-        return service.obtener(id); // Busca la venta
+    // Guardar venta
+    @PostMapping
+    public ResponseEntity<Venta> guardar(
+            @Valid @RequestBody Venta venta) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(venta));
+    }
+
+    // Buscar venta por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Venta> obtener(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.obtener(id));
+    }
+
+    // Eliminar venta
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

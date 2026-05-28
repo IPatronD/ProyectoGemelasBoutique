@@ -1,28 +1,36 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-//BY JAMES
 
-@Entity // Indica que esta clase es una entidad de base de datos
-@Table(name = "categorias") // Define el nombre de la tabla en la BD
-@Data // Genera automáticamente getters, setters, toString, equals, etc.
-@NoArgsConstructor // Constructor vacío
-@AllArgsConstructor // Constructor con todos los atributos
+import java.util.List;
+
+@Entity // Entidad de la BD
+@Table(name = "categorias")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Categoria {
 
-    @Id // Define la clave primaria
+    @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // El ID se genera automáticamente (auto-incremental)
     private Long id;
 
-    @NotNull // Valida que el campo no sea nulo
-    @Column(name = "nombre") // Mapea la columna "nombre" en la tabla
+    @NotBlank(message = "El nombre es obligatorio")
+    @Column(nullable = false, unique = true, length = 100)
+    // No null, único y máximo 100 caracteres
     private String nombre;
 
-    @Column(name = "descripcion") // Mapea la columna "descripcion"
+    @Column(length = 255)
+    // Descripción opcional
     private String descripcion;
+
+    @OneToMany(mappedBy = "categoria")
+    // Una categoría tiene muchos productos
+    @JsonIgnore // Evita bucle infinito en JSON
+    private List<Producto> productos;
 }

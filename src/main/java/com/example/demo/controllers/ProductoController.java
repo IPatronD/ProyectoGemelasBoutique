@@ -2,44 +2,73 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Producto;
 import com.example.demo.service.ProductoService;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-//BY JAMES
 
-@RestController // Indica que es un controlador REST (responde en JSON)
-@RequestMapping("/api/productos") // Ruta base: /api/productos
+// Controlador REST
+@RestController
+
+// Ruta base
+@RequestMapping("/api/productos")
 public class ProductoController {
 
-    @Autowired // Inyección automática del servicio
-    private ProductoService service;
+    // Servicio
+    private final ProductoService service;
 
-    @GetMapping // Endpoint GET -> listar todos los productos
-    public List<Producto> listar() {
-        return service.listar(); // Obtiene la lista desde el servicio
+    // Constructor
+    public ProductoController(ProductoService service) {
+        this.service = service;
     }
 
-    @PostMapping // Endpoint POST -> guardar un nuevo producto
-    public Producto guardar(@RequestBody Producto producto) {
-        // Convierte el JSON recibido en un objeto Producto
-        return service.guardar(producto); // Guarda el producto
+    // Listar productos
+    @GetMapping
+    public ResponseEntity<List<Producto>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    @GetMapping("/{id}") // Endpoint GET -> obtener un producto por ID
-    public Producto obtener(@PathVariable Long id) {
-        // Captura el ID desde la URL
-        return service.obtener(id); // Busca el producto
+    // Guardar producto
+    @PostMapping
+    public ResponseEntity<Producto> guardar(
+            @Valid @RequestBody Producto producto) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(producto));
     }
 
-    @PutMapping("/{id}") // Endpoint PUT -> actualizar un producto
-    public Producto actualizar(@PathVariable Long id, @RequestBody Producto producto) {
-        // Se envía el ID y los nuevos datos del producto
-        return service.actualizar(id, producto); // Actualiza el producto
+    // Buscar producto por id
+    @GetMapping("/{id}")
+    public ResponseEntity<Producto> obtener(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.obtener(id));
     }
 
-    @DeleteMapping("/{id}") // Endpoint DELETE -> eliminar un producto
-    public void eliminar(@PathVariable Long id) {
-        service.eliminar(id); // Elimina el producto
+    // Actualizar producto
+    @PutMapping("/{id}")
+    public ResponseEntity<Producto> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Producto producto) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, producto));
+    }
+
+    // Eliminar producto
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

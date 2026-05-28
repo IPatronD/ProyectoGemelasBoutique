@@ -1,43 +1,54 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import java.time.LocalDateTime;
+import lombok.NoArgsConstructor;
 
-@Entity // Indica que esta clase es una entidad de base de datos
-@Table(name = "ventas") // Nombre de la tabla en la BD
-@Data // Genera getters, setters, toString, equals, etc. automáticamente
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Entity // Entidad de la BD
+@Table(name = "ventas")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Venta {
 
     @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // ID autogenerado (auto-incremental)
     private Long id;
 
-    @NotNull // No permite valores null
-    @Column(name = "fecha") // Columna "fecha" en la BD
+    @NotNull(message = "La fecha es obligatoria")
+    @Column(nullable = false)
+    // Fecha de la venta
     private LocalDateTime fecha;
-    // Fecha y hora de la venta
 
-    @NotNull
-    private Double total;
+    @Positive(message = "El total debe ser mayor a 0")
+    @Column(nullable = false)
     // Total de la venta
+    private Double total;
 
     @ManyToOne
-    // Relación muchos a uno: muchas ventas pueden pertenecer a un cliente
-    @JoinColumn(name = "cliente_id")
-    // Columna que conecta con la tabla clientes
+    @JoinColumn(name = "cliente_id", nullable = false)
+    // Muchas ventas pertenecen a un cliente
     private Cliente cliente;
 
     @ManyToOne
-    // Relación muchos a uno: muchas ventas pueden ser registradas por un usuario
-    @JoinColumn(name = "usuario_id")
-    // Columna que conecta con la tabla usuarios
+    @JoinColumn(name = "usuario_id", nullable = false)
+    // Muchas ventas son registradas por un usuario
     private Usuario usuario;
 
     @ManyToOne
-    @JoinColumn(name = "metodo_pago_id")
+    @JoinColumn(name = "metodo_pago_id", nullable = false)
+    // Método de pago usado
     private MetodoPago metodoPago;
 
+    @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
+    // Una venta tiene muchos detalles
+    @JsonIgnore // Evita bucle infinito
+    private List<DetalleVenta> detallesVenta;
 }

@@ -3,7 +3,6 @@ package com.example.demo.service.impl;
 import com.example.demo.models.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.UsuarioService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +10,11 @@ import java.util.List;
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
-    @Autowired
-    private UsuarioRepository repository;
+    private final UsuarioRepository repository;
+
+    public UsuarioServiceImpl(UsuarioRepository repository) {
+        this.repository = repository;
+    }
 
     @Override
     public List<Usuario> listar() {
@@ -21,45 +23,64 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public Usuario guardar(Usuario usuario) {
+
+        // Validar username repetido
+        if (repository.existsByUsername(usuario.getUsername())) {
+            throw new RuntimeException("El username ya existe");
+        }
+
         return repository.save(usuario);
     }
 
     @Override
     public Usuario obtener(Long id) {
-        return repository.findById(id).orElse(null);
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
     }
 
     @Override
     public Usuario actualizar(Long id, Usuario usuario) {
 
-        Usuario existente = repository.findById(id).orElse(null);
+        Usuario existente = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
 
-        if (existente != null) {
-            existente.setUsername(usuario.getUsername());
-            existente.setPassword(usuario.getPassword());
-            existente.setRol(usuario.getRol());
-            existente.setEstado(usuario.isEstado());
-            existente.setEmpleado(usuario.getEmpleado());
+        existente.setUsername(usuario.getUsername());
+        existente.setPassword(usuario.getPassword());
+        existente.setEstado(usuario.isEstado());
+        existente.setEmpleado(usuario.getEmpleado());
 
-            return repository.save(existente);
-        }
+        // Roles
+        existente.setRoles(usuario.getRoles());
 
-        return null;
+        return repository.save(existente);
     }
 
     @Override
     public void eliminar(Long id) {
-        repository.deleteById(id);
+
+        Usuario usuario = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
+
+        repository.delete(usuario);
     }
+
+    // CONSULTAS PERSONALIZADAS
 
     @Override
     public Usuario buscarPorUsername(String username) {
-        return repository.findByUsername(username).orElse(null);
+
+        return repository.findByUsername(username)
+                .orElseThrow(() ->
+                        new RuntimeException("Usuario no encontrado"));
     }
 
     @Override
     public List<Usuario> buscarPorRol(String rol) {
-        return repository.findByRol(rol);
+        return repository.buscarPorRol(rol);
     }
 
     @Override

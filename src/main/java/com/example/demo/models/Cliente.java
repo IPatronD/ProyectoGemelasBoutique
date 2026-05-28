@@ -1,83 +1,55 @@
 package com.example.demo.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity // Indica que esta clase es una entidad de base de datos
-@Table(name = "clientes") // Nombre de la tabla en la BD
+import java.util.List;
+
+@Entity // Entidad de la BD
+@Table(name = "clientes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Cliente {
 
     @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // ID autogenerado (auto-incremental)
     private Long id;
 
-    @NotBlank // No permite valores vacíos o null
-    @Size(min = 3, max = 50) // Longitud entre 3 y 50 caracteres
-    private String tipo; // Tipo de cliente (ej: natural, empresa)
+    @NotBlank(message = "El tipo es obligatorio")
+    @Size(min = 3, max = 50)
+    // Tipo de cliente
+    private String tipo;
 
-    @NotBlank
-    @Size(min = 3, max = 100) // Longitud entre 3 y 100 caracteres
-    private String nombres; // Nombre del cliente
+    @NotBlank(message = "Los nombres son obligatorios")
+    @Size(min = 3, max = 100)
+    // Nombre del cliente
+    private String nombres;
 
-    @NotBlank
-    @Column(unique = true, length = 15)
-    // Debe ser único y con máximo 15 caracteres
-    private String documento; // DNI o RUC
+    @NotBlank(message = "El documento es obligatorio")
+    @Column(unique = true, length = 15, nullable = false)
+    // Documento único
+    private String documento;
 
-    @NotBlank
-    @Pattern(regexp = "\\d{9}")
-    // Solo permite exactamente 9 dígitos
-    private String telefono; // Número de teléfono
+    @NotBlank(message = "El teléfono es obligatorio")
+    @Pattern(regexp = "\\d{9}", message = "Debe tener 9 dígitos")
+    @Column(length = 9, nullable = false)
+    private String telefono;
 
-    public Cliente() {
-    }
+    @Email(message = "Correo inválido")
+    @Column(unique = true, nullable = false)
+    private String correo;
 
-    public Cliente(Long id, String tipo, String nombres, String documento, String telefono) {
-        this.id = id;
-        this.tipo = tipo;
-        this.nombres = nombres;
-        this.documento = documento;
-        this.telefono = telefono;
-    }
+    @Column(nullable = false)
+    // Estado del cliente
+    private boolean estado = true;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public String getNombres() {
-        return nombres;
-    }
-
-    public void setNombres(String nombres) {
-        this.nombres = nombres;
-    }
-
-    public String getDocumento() {
-        return documento;
-    }
-
-    public void setDocumento(String documento) {
-        this.documento = documento;
-    }
-
-    public String getTelefono() {
-        return telefono;
-    }
-
-    public void setTelefono(String telefono) {
-        this.telefono = telefono;
-    }
+    @OneToMany(mappedBy = "cliente")
+    // Un cliente puede tener muchas ventas
+    @JsonIgnore // Evita bucle infinito
+    private List<Venta> ventas;
 }

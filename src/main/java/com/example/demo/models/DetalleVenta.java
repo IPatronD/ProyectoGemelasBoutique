@@ -1,35 +1,43 @@
 package com.example.demo.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Positive;
 import lombok.Getter;
 import lombok.Setter;
 
-@Setter // Genera automáticamente los setters
-@Getter // Genera automáticamente los getters
-@Entity // Indica que es una entidad de base de datos
-@Table(name = "detalle_venta") // Nombre de la tabla en la BD
+@Setter // Genera setters
+@Getter // Genera getters
+@Entity // Entidad de la BD
+@Table(name = "detalle_venta")
 public class DetalleVenta {
 
     @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    // ID autogenerado (auto-incremental)
     private Long id;
 
     @ManyToOne
-    // Relación muchos a uno: muchos detalles pertenecen a una venta
-    @JoinColumn(name = "venta_id")
-    // Columna que conecta con la tabla venta
+    @JoinColumn(name = "venta_id", nullable = false)
+    // Muchos detalles pertenecen a una venta
     private Venta venta;
 
     @ManyToOne
-    // Relación muchos a uno: muchos detalles pueden tener el mismo producto
-    @JoinColumn(name = "producto_id")
-    // Columna que conecta con la tabla producto
+    @JoinColumn(name = "producto_id", nullable = false)
+    // Muchos detalles pueden tener el mismo producto
     private Producto producto;
 
-    private int cantidad; // Cantidad de productos vendidos
-    private double precio; // Precio del producto en la venta
+    @Positive(message = "La cantidad debe ser mayor a 0")
+    // Cantidad vendida
+    private int cantidad;
 
-    // Constructor vacío (necesario para JPA)
-    public DetalleVenta() {}
+    @Positive(message = "El precio debe ser mayor a 0")
+    // Precio del producto
+    private double precio;
+
+    @Positive(message = "El subtotal debe ser mayor a 0")
+    // Total del detalle
+    private double subtotal;
+
+    // Constructor vacío
+    public DetalleVenta() {
+    }
 }

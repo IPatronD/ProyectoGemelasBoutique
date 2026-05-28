@@ -1,41 +1,74 @@
 package com.example.demo.controllers;
 
-import java.util.List;
 import com.example.demo.models.MetodoPago;
 import com.example.demo.service.MetodoPagoService;
+
+import jakarta.validation.Valid;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
-@RestController // Indica que es un controlador REST (responde en JSON)
-@RequestMapping("/api/metodos-pago") // Ruta base de los endpoints
+// Controlador REST
+@RestController
+
+// Ruta base
+@RequestMapping("/api/metodos-pago")
 public class MetodoPagoController {
 
+    // Servicio
     private final MetodoPagoService service;
 
-    // Constructor para inyección de dependencias (buena práctica)
+    // Constructor
     public MetodoPagoController(MetodoPagoService service) {
         this.service = service;
     }
 
-    @GetMapping // Endpoint GET -> listar todos los métodos de pago
-    public List<MetodoPago> listar() {
-        return service.listar(); // Obtiene la lista desde el servicio
+    // Listar métodos de pago
+    @GetMapping
+    public ResponseEntity<List<MetodoPago>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    @PostMapping // Endpoint POST -> guardar un nuevo método de pago
-    public MetodoPago guardar(@RequestBody MetodoPago metodoPago) {
-        // @RequestBody convierte el JSON en objeto MetodoPago
-        return service.guardar(metodoPago); // Guarda el método de pago
+    // Guardar método de pago
+    @PostMapping
+    public ResponseEntity<MetodoPago> guardar(
+            @Valid @RequestBody MetodoPago metodoPago) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(metodoPago));
     }
 
-    @PutMapping("/{id}") // Endpoint PUT -> actualizar un método de pago
-    public MetodoPago actualizar(@PathVariable Long id, @RequestBody MetodoPago metodoPago) {
-        // @PathVariable obtiene el ID desde la URL
-        return service.actualizar(id, metodoPago); // Actualiza el método de pago
+    // Obtener método por id
+    @GetMapping("/{id}")
+    public ResponseEntity<MetodoPago> obtener(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                service.obtenerPorId(id));
     }
 
-    @DeleteMapping("/{id}") // Endpoint DELETE -> eliminar por ID
-    public void eliminar(@PathVariable Long id) {
-        service.eliminar(id); // Elimina el método de pago
+    // Actualizar método de pago
+    @PutMapping("/{id}")
+    public ResponseEntity<MetodoPago> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody MetodoPago metodoPago) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, metodoPago));
+    }
+
+    // Eliminar método de pago
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }

@@ -7,8 +7,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//BY JAMES
-
 @Service
 public class CategoriaServiceImpl implements CategoriaService {
 
@@ -25,25 +23,43 @@ public class CategoriaServiceImpl implements CategoriaService {
 
     @Override
     public Categoria guardar(Categoria categoria) {
+
+        // Verifica si ya existe el nombre
+        if (repository.existsByNombre(categoria.getNombre())) {
+            throw new RuntimeException("La categoría ya existe");
+        }
+
         return repository.save(categoria);
     }
 
     @Override
     public Categoria obtener(Long id) {
-        return repository.findById(id).orElse(null);
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Categoría no encontrada"));
     }
 
     @Override
     public Categoria actualizar(Long id, Categoria categoriaDetails) {
-        return repository.findById(id).map(categoria -> {
-            categoria.setNombre(categoriaDetails.getNombre());
-            categoria.setDescripcion(categoriaDetails.getDescripcion());
-            return repository.save(categoria);
-        }).orElse(null);
+
+        Categoria categoria = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Categoría no encontrada"));
+
+        categoria.setNombre(categoriaDetails.getNombre());
+        categoria.setDescripcion(categoriaDetails.getDescripcion());
+
+        return repository.save(categoria);
     }
 
     @Override
     public void eliminar(Long id) {
-        repository.deleteById(id);
+
+        Categoria categoria = repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Categoría no encontrada"));
+
+        repository.delete(categoria);
     }
 }

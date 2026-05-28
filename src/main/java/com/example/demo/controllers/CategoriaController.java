@@ -1,60 +1,73 @@
 package com.example.demo.controllers;
 
 import com.example.demo.models.Categoria;
-
 import com.example.demo.service.CategoriaService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.validation.Valid;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// Indica que esta clase es un controlador REST (devuelve JSON)
+// Controlador REST
 @RestController
 
-// Define la ruta base para todos los endpoints: /api/categorias
+// Ruta base
 @RequestMapping("/api/categorias")
 public class CategoriaController {
 
-    // Inyecta el servicio de Categoria automáticamente
-    @Autowired
-    private CategoriaService service;
+    // Servicio de categoria
+    private final CategoriaService service;
 
-    // Endpoint GET -> Lista todas las categorías
-    // URL: /api/categorias
+    // Constructor
+    public CategoriaController(CategoriaService service) {
+        this.service = service;
+    }
+
+    // Listar categorias
     @GetMapping
-    public List<Categoria> listar() {
-        return service.listar(); // Llama al servicio para obtener la lista
+    public ResponseEntity<List<Categoria>> listar() {
+
+        return ResponseEntity.ok(service.listar());
     }
 
-    // Endpoint POST -> Guarda una nueva categoría
-    // URL: /api/categorias
+    // Guardar categoria
     @PostMapping
-    public Categoria guardar(@RequestBody Categoria categoria) {
-        // @RequestBody convierte el JSON en objeto Categoria
-        return service.guardar(categoria); // Guarda la categoría
+    public ResponseEntity<Categoria> guardar(
+            @Valid @RequestBody Categoria categoria) {
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(service.guardar(categoria));
     }
 
-    // Endpoint GET -> Obtiene una categoría por ID
-    // URL: /api/categorias/{id}
+    // Buscar categoria por id
     @GetMapping("/{id}")
-    public Categoria obtener(@PathVariable Long id) {
-        // @PathVariable captura el ID desde la URL
-        return service.obtener(id); // Busca la categoría por ID
+    public ResponseEntity<Categoria> obtener(
+            @PathVariable Long id) {
+
+        return ResponseEntity.ok(service.obtener(id));
     }
 
-    // Endpoint PUT -> Actualiza una categoría existente
-    // URL: /api/categorias/{id}
+    // Actualizar categoria
     @PutMapping("/{id}")
-    public Categoria actualizar(@PathVariable Long id, @RequestBody Categoria categoria) {
-        return service.actualizar(id, categoria); // Actualiza la categoría
+    public ResponseEntity<Categoria> actualizar(
+            @PathVariable Long id,
+            @Valid @RequestBody Categoria categoria) {
+
+        return ResponseEntity.ok(
+                service.actualizar(id, categoria));
     }
 
-    // Endpoint DELETE -> Elimina una categoría por ID
-    // URL: /api/categorias/{id}
+    // Eliminar categoria
     @DeleteMapping("/{id}")
-    public void eliminar(@PathVariable Long id) {
-        service.eliminar(id); // Elimina la categoría
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+
+        service.eliminar(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
