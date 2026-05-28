@@ -13,6 +13,7 @@ public class DetalleVenta {
 
     @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // ID autogenerado (auto-incremental)
     private Long id;
 
     @ManyToOne
@@ -25,17 +26,20 @@ public class DetalleVenta {
     // Muchos detalles pueden tener el mismo producto
     private Producto producto;
 
+    private Double descuentoPorcentaje = 0.0; // Porcentaje de descuento por ítem
+    private Double descuentoMonto = 0.0; // Monto del descuento calculado
+    private Double neto = 0.0; // Subtotal neto por ítem (subtotal - descuentoMonto)
     @Positive(message = "La cantidad debe ser mayor a 0")
     // Cantidad vendida
-    private int cantidad;
+    private int cantidad; // Cantidad de productos vendidos
 
     @Positive(message = "El precio debe ser mayor a 0")
     // Precio del producto
-    private double precio;
+    private double precio; // Precio del producto en la venta
 
     @Positive(message = "El subtotal debe ser mayor a 0")
     // Total del detalle
-    private double subtotal;
+    private double subtotal; // Subtotal por ítem (cantidad * precio)
 
     // Constructor vacío
     public DetalleVenta() {

@@ -31,9 +31,10 @@ class UsuarioServiceImplTest {
                 id,
                 "dcabanillas",
                 "123456",
-                "ADMIN",
                 true,
-                null);
+                null,
+                null
+        );
     }
 
     @Test
@@ -84,15 +85,16 @@ class UsuarioServiceImplTest {
     }
 
     @Test
-    void obtenerDebeRetornarNullCuandoNoExiste() {
+    void obtenerDebeLanzarExcepcionCuandoNoExiste() {
 
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Usuario resultado = service.obtener(1L);
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> service.obtener(1L));
 
-        assertNull(resultado);
+        assertEquals("Usuario no encontrado", ex.getMessage());
 
-        verify(repository, times(1)).findById(1L);
+        verify(repository).findById(1L);
     }
 
     @Test
@@ -118,25 +120,30 @@ class UsuarioServiceImplTest {
     }
 
     @Test
-    void actualizarDebeRetornarNullCuandoNoExiste() {
+    void actualizarDebeLanzarExcepcionCuandoNoExiste() {
 
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Usuario resultado = service.actualizar(1L, crearUsuario(null));
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> service.actualizar(1L, crearUsuario(null)));
 
-        assertNull(resultado);
+        assertEquals("Usuario no encontrado", ex.getMessage());
 
         verify(repository).findById(1L);
         verify(repository, never()).save(any());
     }
 
     @Test
-    void eliminarDebeLlamarAlRepositorio() {
+    void eliminarDebeLanzarExcepcionCuandoNoExiste() {
 
-        doNothing().when(repository).deleteById(1L);
+        when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        service.eliminar(1L);
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> service.eliminar(1L));
 
-        verify(repository, times(1)).deleteById(1L);
+        assertEquals("Usuario no encontrado", ex.getMessage());
+
+        verify(repository).findById(1L);
+        verify(repository, never()).deleteById(any());
     }
 }

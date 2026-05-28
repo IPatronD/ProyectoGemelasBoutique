@@ -75,23 +75,35 @@ class ClienteServiceImplTest {
         assertEquals(1L, response.getId());
     }
 
-    @Test // Prueba buscar por ID cuando NO existe
-    void buscarPorId_NoExiste_DebeRetornarNull() {
-        // Simula que no encuentra el cliente
+    @Test
+    void buscarPorId_NoExiste_DebeLanzarExcepcion() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Cliente response = service.buscarPorId(1L);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.buscarPorId(1L)
+        );
 
-        // Debe retornar null según tu lógica
-        assertNull(response);
+        assertEquals("Cliente no encontrado", exception.getMessage());
+
+        verify(repository).findById(1L);
     }
 
-    @Test // Prueba eliminar()
+    @Test
     void eliminar_DebeLlamarRepository() {
-        // Ejecuta eliminación
-        service.eliminar(1L);
 
-        // Verifica que se llamó al repositorio
-        verify(repository).deleteById(1L);
+        Cliente cliente = new Cliente();
+        cliente.setId(1L);
+
+        // Simula que el cliente existe
+        when(repository.findById(1L)).thenReturn(Optional.of(cliente));
+
+        // Ejecuta
+        assertDoesNotThrow(() -> service.eliminar(1L));
+
+        // Verificaciones
+        verify(repository).findById(1L);
+        verify(repository).delete(cliente);
     }
 }

@@ -5,94 +5,284 @@ import com.example.demo.service.EmpleadoService;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 // Habilita Mockito en JUnit 5
 class EmpleadoControllerTest {
 
-    @Mock // Crea un mock (simulación) del servicio
+    @Mock
+    // Mock del servicio
     private EmpleadoService service;
 
-    @InjectMocks // Inyecta el mock dentro del controlador
+    @InjectMocks
+    // Inyecta el mock en el controlador
     private EmpleadoController controller;
 
-    @Test // Prueba del método listar()
+    @Test
+        // Prueba listar()
     void listar_DebeRetornarLista() {
-        // Simula que el servicio devuelve una lista vacía
-        when(service.listar()).thenReturn(Collections.emptyList());
 
-        // Ejecuta el método
-        List<Empleado> response = controller.listar();
+        // Simula lista vacía
+        when(service.listar())
+                .thenReturn(Collections.emptyList());
 
-        // Verifica que no sea null
-        assertNotNull(response);
+        // Ejecuta método
+        ResponseEntity<List<Empleado>> response =
+                controller.listar();
 
-        // Verifica que se llamó al servicio
-        verify(service).listar();
+        // Verifica status
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        // Verifica body
+        assertNotNull(response.getBody());
+
+        // Verifica llamada
+        verify(service, times(1))
+                .listar();
     }
 
-    @Test // Prueba del método obtener()
+    @Test
+        // Prueba obtener()
     void obtener_DebeRetornarEmpleado() {
-        Empleado e = new Empleado(); // Crea objeto de prueba
+
+        Empleado e = new Empleado();
         e.setId(1L);
 
-        // Simula búsqueda por ID
-        when(service.obtener(1L)).thenReturn(e);
+        // Simula búsqueda
+        when(service.obtener(1L))
+                .thenReturn(e);
 
-        // Ejecuta el método
-        Empleado response = controller.obtener(1L);
+        // Ejecuta método
+        ResponseEntity<Empleado> response =
+                controller.obtener(1L);
 
-        // Verifica que el ID sea correcto
-        assertEquals(1L, response.getId());
+        // Verifica status
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        // Verifica ID
+        assertEquals(1L,
+                response.getBody().getId());
+
+        verify(service, times(1))
+                .obtener(1L);
     }
 
-    @Test // Prueba del método guardar()
+    @Test
+        // Prueba guardar()
     void guardar_DebeGuardarEmpleado() {
+
         Empleado e = new Empleado();
         e.setId(1L);
 
         // Simula guardado
-        when(service.guardar(e)).thenReturn(e);
+        when(service.guardar(e))
+                .thenReturn(e);
 
-        Empleado response = controller.guardar(e);
+        // Ejecuta método
+        ResponseEntity<Empleado> response =
+                controller.guardar(e);
 
-        // Verifica que no sea null
-        assertNotNull(response);
+        // Verifica status CREATED
+        assertEquals(201,
+                response.getStatusCode().value());
 
-        // Verifica que se llamó al servicio
-        verify(service).guardar(e);
+        // Verifica body
+        assertNotNull(response.getBody());
+
+        verify(service, times(1))
+                .guardar(e);
     }
 
-    @Test // Prueba del método actualizar()
+    @Test
+        // Prueba actualizar()
     void actualizar_DebeActualizarEmpleado() {
+
         Empleado e = new Empleado();
         e.setId(1L);
 
-        // Simula actualización (usa guardar internamente)
-        when(service.guardar(e)).thenReturn(e);
+        // Simula actualización
+        when(service.actualizar(eq(1L), any(Empleado.class)))
+                .thenReturn(e);
 
-        // Ejecuta el método
-        Empleado response = controller.actualizar(1L, e);
+        // Ejecuta método
+        ResponseEntity<Empleado> response =
+                controller.actualizar(1L, e);
 
-        // Verifica que el ID sea correcto
-        assertEquals(1L, response.getId());
+        // Verifica status
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        // Verifica ID
+        assertEquals(1L,
+                response.getBody().getId());
+
+        verify(service, times(1))
+                .actualizar(eq(1L), any(Empleado.class));
     }
 
-    @Test // Prueba del método eliminar()
+    @Test
+        // Prueba eliminar()
     void eliminar_DebeLlamarService() {
-        // Ejecuta eliminación
-        controller.eliminar(1L);
 
-        // Verifica que se llamó al servicio
-        verify(service).eliminar(1L);
+        doNothing().when(service)
+                .eliminar(1L);
+
+        // Ejecuta método
+        ResponseEntity<Void> response =
+                controller.eliminar(1L);
+
+        // Verifica status NO_CONTENT
+        assertEquals(204,
+                response.getStatusCode().value());
+
+        // Verifica llamada
+        verify(service, times(1))
+                .eliminar(1L);
+    }
+
+    @Test
+        // Prueba buscarPorDni()
+    void buscarPorDni() {
+
+        Empleado e = new Empleado();
+        e.setDni("12345678");
+
+        when(service.buscarPorDni("12345678"))
+                .thenReturn(e);
+
+        ResponseEntity<Empleado> response =
+                controller.buscarPorDni("12345678");
+
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertEquals("12345678",
+                response.getBody().getDni());
+
+        verify(service, times(1))
+                .buscarPorDni("12345678");
+    }
+
+    @Test
+        // Prueba buscarPorCorreo()
+    void buscarPorCorreo() {
+
+        Empleado e = new Empleado();
+        e.setCorreo("test@gmail.com");
+
+        when(service.buscarPorCorreo("test@gmail.com"))
+                .thenReturn(e);
+
+        ResponseEntity<Empleado> response =
+                controller.buscarPorCorreo("test@gmail.com");
+
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertEquals("test@gmail.com",
+                response.getBody().getCorreo());
+
+        verify(service, times(1))
+                .buscarPorCorreo("test@gmail.com");
+    }
+
+    @Test
+        // Prueba buscarPorApellidos()
+    void buscarPorApellidos() {
+
+        Empleado e = new Empleado();
+        e.setApellidos("Perez");
+
+        when(service.buscarPorApellidos("Perez"))
+                .thenReturn(List.of(e));
+
+        ResponseEntity<List<Empleado>> response =
+                controller.buscarPorApellidos("Perez");
+
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertEquals(1,
+                response.getBody().size());
+
+        verify(service, times(1))
+                .buscarPorApellidos("Perez");
+    }
+
+    @Test
+        // Prueba buscarPorNombre()
+    void buscarPorNombre() {
+
+        Empleado e = new Empleado();
+        e.setNombres("Juan");
+
+        when(service.buscarPorNombre("Juan"))
+                .thenReturn(List.of(e));
+
+        ResponseEntity<List<Empleado>> response =
+                controller.buscarPorNombre("Juan");
+
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertEquals(1,
+                response.getBody().size());
+
+        verify(service, times(1))
+                .buscarPorNombre("Juan");
+    }
+
+    @Test
+        // Prueba existeDni()
+    void existeDni() {
+
+        when(service.existeDni("12345678"))
+                .thenReturn(true);
+
+        ResponseEntity<Boolean> response =
+                controller.existeDni("12345678");
+
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertTrue(response.getBody());
+
+        verify(service, times(1))
+                .existeDni("12345678");
+    }
+
+    @Test
+        // Prueba existeCorreo()
+    void existeCorreo() {
+
+        when(service.existeCorreo("test@gmail.com"))
+                .thenReturn(true);
+
+        ResponseEntity<Boolean> response =
+                controller.existeCorreo("test@gmail.com");
+
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertTrue(response.getBody());
+
+        verify(service, times(1))
+                .existeCorreo("test@gmail.com");
     }
 }

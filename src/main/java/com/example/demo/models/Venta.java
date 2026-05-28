@@ -11,44 +11,55 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Entity // Entidad de la BD
+@Entity
 @Table(name = "ventas")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Venta {
 
-    @Id // Clave primaria
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @NotNull(message = "La fecha es obligatoria")
     @Column(nullable = false)
-    // Fecha de la venta
     private LocalDateTime fecha;
 
     @Positive(message = "El total debe ser mayor a 0")
     @Column(nullable = false)
-    // Total de la venta
     private Double total;
+
+    // ====== CAMPOS DE NEGOCIO ======
+    private Double subtotal; // Base imponible (compatibilidad)
+
+    private Double descuento = 0.0; // descuento global en dinero
+    private Double iva; // monto de IVA
+
+    private Double subtotalBruto = 0.0;      // suma precio * cantidad
+    private Double totalDescItems = 0.0;     // descuentos por ítems
+    private Double subtotalNeto = 0.0;       // bruto - desc ítems
+
+    private Double descuentoGlobalPorcentaje = 0.0; // %
+    private Double baseImponible = 0.0;      // neto - descuento global
+
+    private Double tasaIva = 16.0; // %
+
+    // ====== RELACIONES ======
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
-    // Muchas ventas pertenecen a un cliente
     private Cliente cliente;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    // Muchas ventas son registradas por un usuario
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "metodo_pago_id", nullable = false)
-    // Método de pago usado
     private MetodoPago metodoPago;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
-    // Una venta tiene muchos detalles
-    @JsonIgnore // Evita bucle infinito
-    private List<DetalleVenta> detallesVenta;
+    @JsonIgnore
+    private List<DetalleVenta> detalles; // 🔥 CORREGIDO (antes: detallesVenta)
 }

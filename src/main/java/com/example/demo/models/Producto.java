@@ -1,11 +1,14 @@
 package com.example.demo.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.List;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+//BY JAMES
 
 import java.util.List;
 
@@ -18,6 +21,7 @@ public class Producto {
 
     @Id // Clave primaria
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // ID autogenerado (auto-incremental)
     private Long id;
 
     @NotBlank(message = "El nombre es obligatorio")

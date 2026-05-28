@@ -2,86 +2,117 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Venta;
 import com.example.demo.service.VentaService;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import org.springframework.http.ResponseEntity;
+
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-// Habilita Mockito en JUnit 5
 class VentaControllerTest {
 
-    @Mock // Simula el servicio
+    @Mock
     private VentaService service;
 
-    @InjectMocks // Inyecta el mock en el controlador
+    @InjectMocks
     private VentaController ventaController;
 
-    @Test // Prueba del método listar()
+    @Test
     void listar() {
+
         Venta v1 = new Venta();
         v1.setTotal(200.0);
 
-        // Simula que el servicio devuelve una lista con una venta
-        when(service.listar()).thenReturn(List.of(v1));
+        when(service.listar())
+                .thenReturn(List.of(v1));
 
-        // Ejecuta el método
-        List<Venta> resultado = ventaController.listar();
+        ResponseEntity<List<Venta>> response =
+                ventaController.listar();
 
-        // Validaciones
-        assertNotNull(resultado); // No debe ser null
-        assertEquals(1, resultado.size()); // Debe tener 1 elemento
+        assertEquals(200,
+                response.getStatusCode().value());
 
-        // Verifica que el servicio fue llamado
-        verify(service).listar();
+        assertEquals(1,
+                response.getBody().size());
+
+        verify(service, times(1))
+                .listar();
     }
 
-    @Test // Prueba del método guardar()
+    @Test
     void guardar() {
+
         Venta venta = new Venta();
         venta.setTotal(500.0);
 
-        // Simula el guardado
-        when(service.guardar(any(Venta.class))).thenReturn(venta);
+        when(service.guardar(any(Venta.class)))
+                .thenReturn(venta);
 
-        // Ejecuta el método
-        Venta resultado = ventaController.guardar(venta);
+        ResponseEntity<Venta> response =
+                ventaController.guardar(venta);
 
-        // Validaciones
-        assertNotNull(resultado);
-        assertEquals(500.0, resultado.getTotal());
+        assertEquals(201,
+                response.getStatusCode().value());
 
-        // Verifica que se llamó con el mismo objeto
-        verify(service).guardar(venta);
+        assertNotNull(response.getBody());
+
+        assertEquals(500.0,
+                response.getBody().getTotal());
+
+        verify(service, times(1))
+                .guardar(venta);
     }
 
-    @Test // Prueba del método obtener()
+    @Test
     void obtener() {
 
-        Long idBuscado = 1L;
+        Long id = 1L;
 
-        Venta ventaEsperada = new Venta();
-        ventaEsperada.setId(idBuscado);
-        ventaEsperada.setTotal(350.0);
+        Venta venta = new Venta();
+        venta.setId(id);
+        venta.setTotal(350.0);
 
-        // Simula búsqueda por ID
-        when(service.obtener(idBuscado)).thenReturn(ventaEsperada);
+        when(service.obtener(id))
+                .thenReturn(venta);
 
-        // Ejecuta el método
-        Venta resultado = ventaController.obtener(idBuscado);
+        ResponseEntity<Venta> response =
+                ventaController.obtener(id);
 
-        // Validaciones
-        assertNotNull(resultado);
-        assertEquals(idBuscado, resultado.getId());
-        assertEquals(350.0, resultado.getTotal());
+        assertEquals(200,
+                response.getStatusCode().value());
 
-        // Verifica que se llamó correctamente
-        verify(service).obtener(idBuscado);
+        assertEquals(id,
+                response.getBody().getId());
+
+        assertEquals(350.0,
+                response.getBody().getTotal());
+
+        verify(service, times(1))
+                .obtener(id);
+    }
+
+    @Test
+    void eliminar() {
+
+        doNothing().when(service)
+                .eliminar(1L);
+
+        ResponseEntity<Void> response =
+                ventaController.eliminar(1L);
+
+        assertEquals(204,
+                response.getStatusCode().value());
+
+        verify(service, times(1))
+                .eliminar(1L);
     }
 }

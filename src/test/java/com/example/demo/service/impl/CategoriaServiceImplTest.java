@@ -2,28 +2,35 @@ package com.example.demo.service.impl;
 
 import com.example.demo.models.Categoria;
 import com.example.demo.repository.CategoriaRepository;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 
-import java.util.*;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class CategoriaServiceImplTest {
 
-    @Mock // Simula el repositorio
+    @Mock
     private CategoriaRepository repository;
 
-    @InjectMocks // Inyecta el mock en el servicio
+    @InjectMocks
     private CategoriaServiceImpl service;
 
-    private Categoria categoria; // Objeto de prueba
+    private Categoria categoria;
 
-    @BeforeEach // Se ejecuta antes de cada test
+    @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Inicializa mocks
 
         categoria = new Categoria();
         categoria.setId(1L);
@@ -31,24 +38,22 @@ class CategoriaServiceImplTest {
         categoria.setDescripcion("Dispositivos electrónicos");
     }
 
-    @Test // Prueba listar()
+    @Test
     void testListar() {
-        // Simula que el repositorio devuelve una lista
+
         when(repository.findAll()).thenReturn(Arrays.asList(categoria));
 
         List<Categoria> resultado = service.listar();
 
-        // Validaciones
         assertNotNull(resultado);
         assertEquals(1, resultado.size());
 
-        // Verifica interacción
         verify(repository, times(1)).findAll();
     }
 
-    @Test // Prueba guardar()
+    @Test
     void testGuardar() {
-        // Simula guardado
+
         when(repository.save(any(Categoria.class))).thenReturn(categoria);
 
         Categoria resultado = service.guardar(categoria);
@@ -59,8 +64,9 @@ class CategoriaServiceImplTest {
         verify(repository, times(1)).save(categoria);
     }
 
-    @Test // Prueba obtener cuando existe
+    @Test
     void testObtener_existente() {
+
         when(repository.findById(1L)).thenReturn(Optional.of(categoria));
 
         Categoria resultado = service.obtener(1L);
@@ -71,30 +77,33 @@ class CategoriaServiceImplTest {
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test // Prueba obtener cuando NO existe
+    @Test
     void testObtener_noExistente() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Categoria resultado = service.obtener(1L);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.obtener(1L)
+        );
 
-        assertNull(resultado); // Correcto según tu lógica
+        assertEquals("Categoría no encontrada", exception.getMessage());
 
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test // Prueba actualizar cuando existe
+    @Test
     void testActualizar_existente() {
+
         Categoria nuevosDatos = new Categoria();
         nuevosDatos.setNombre("Hogar");
         nuevosDatos.setDescripcion("Artículos del hogar");
 
-        // Simula que encuentra la categoría
         when(repository.findById(1L)).thenReturn(Optional.of(categoria));
         when(repository.save(any(Categoria.class))).thenReturn(categoria);
 
         Categoria resultado = service.actualizar(1L, nuevosDatos);
 
-        // Validaciones
         assertNotNull(resultado);
         assertEquals("Hogar", resultado.getNombre());
         assertEquals("Artículos del hogar", resultado.getDescripcion());
@@ -103,24 +112,35 @@ class CategoriaServiceImplTest {
         verify(repository).save(categoria);
     }
 
-    @Test // Prueba actualizar cuando NO existe
+    @Test
     void testActualizar_noExistente() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Categoria resultado = service.actualizar(1L, categoria);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.actualizar(1L, categoria)
+        );
 
-        assertNull(resultado); // Correcto según tu lógica
+        assertEquals("Categoría no encontrada", exception.getMessage());
 
         verify(repository).findById(1L);
-        verify(repository, never()).save(any()); // No debe guardar
+        verify(repository, never()).save(any());
     }
 
-    @Test // Prueba eliminar()
+    @Test
     void testEliminar() {
-        doNothing().when(repository).deleteById(1L);
 
-        service.eliminar(1L);
+        // Simula que la categoría existe
+        when(repository.findById(1L)).thenReturn(Optional.of(categoria));
 
-        verify(repository, times(1)).deleteById(1L);
+        // Verifica que no lance excepción
+        assertDoesNotThrow(() -> service.eliminar(1L));
+
+        // Verifica búsqueda
+        verify(repository).findById(1L);
+
+        // Verifica eliminación correcta
+        verify(repository).delete(categoria);
     }
 }

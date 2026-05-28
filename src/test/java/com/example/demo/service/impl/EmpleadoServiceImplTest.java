@@ -32,7 +32,9 @@ class EmpleadoServiceImplTest {
                 "Diego",
                 "Cabanillas",
                 "12345678",
-                "diego@mail.com"
+                "diego@mail.com",
+                true, // o false según tu lógica
+                null  // o un Usuario mock si lo necesitas
         );
     }
 
@@ -85,23 +87,55 @@ class EmpleadoServiceImplTest {
         verify(repository, times(1)).findById(1L);
     }
 
-    @Test // Prueba obtener cuando NO existe
-    void obtenerDebeRetornarNullCuandoNoExiste() {
-        when(repository.findById(1L)).thenReturn(Optional.empty());
+    @Test
+        // Prueba actualizar empleado
+    void actualizarDebeModificarEmpleado() {
 
-        Empleado resultado = service.obtener(1L);
+        Empleado existente = crearEmpleado(1L);
 
-        assertNull(resultado); // según tu lógica actual
+        Empleado nuevosDatos = new Empleado();
+        nuevosDatos.setNombres("Juan");
+        nuevosDatos.setApellidos("Perez");
+        nuevosDatos.setDni("87654321");
+        nuevosDatos.setCorreo("juan@mail.com");
 
-        verify(repository, times(1)).findById(1L);
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(existente));
+
+        when(repository.save(any(Empleado.class)))
+                .thenReturn(existente);
+
+        Empleado resultado = service.actualizar(1L, nuevosDatos);
+
+        assertNotNull(resultado);
+        assertEquals("Juan",
+                resultado.getNombres());
+
+        verify(repository, times(1))
+                .findById(1L);
+
+        verify(repository, times(1))
+                .save(existente);
     }
 
-    @Test // Prueba eliminar()
+    @Test
+// Prueba eliminar empleado
     void eliminarDebeLlamarAlRepositorio() {
-        doNothing().when(repository).deleteById(1L);
+
+        Empleado empleado = crearEmpleado(1L);
+
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(empleado));
+
+        doNothing().when(repository)
+                .delete(empleado);
 
         service.eliminar(1L);
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(repository, times(1))
+                .findById(1L);
+
+        verify(repository, times(1))
+                .delete(empleado);
     }
 }

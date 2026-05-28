@@ -1,90 +1,110 @@
 package com.example.demo.controllers;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.api.BeforeEach;
-import org.mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
-
 import com.example.demo.models.MetodoPago;
 import com.example.demo.service.MetodoPagoService;
 
-import java.util.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.http.ResponseEntity;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-
 @ExtendWith(MockitoExtension.class)
-// Habilita Mockito en JUnit 5
 class MetodoPagoControllerTest {
 
-    @Mock // Crea un mock (simulación) del servicio
+    @Mock
     private MetodoPagoService service;
 
-    @InjectMocks // Inyecta el mock dentro del controlador
+    @InjectMocks
     private MetodoPagoController controller;
 
-    private MetodoPago metodo; // Objeto de prueba
+    private MetodoPago metodo;
 
-    @BeforeEach // Se ejecuta antes de cada test
+    @BeforeEach
     void setUp() {
-        metodo = new MetodoPago(); // Inicializa el objeto
+        metodo = new MetodoPago();
         metodo.setId(1L);
-        metodo.setNombre("Efectivo"); // Valor de ejemplo
+        metodo.setNombre("Efectivo");
     }
 
-    @Test // Prueba del método listar()
+    @Test
     void listar() {
-        // Simula que el servicio devuelve una lista con un elemento
-        when(service.listar()).thenReturn(Arrays.asList(metodo));
 
-        // Ejecuta el método del controlador
-        var lista = controller.listar();
+        when(service.listar())
+                .thenReturn(Arrays.asList(metodo));
 
-        // Verifica que la lista tenga 1 elemento
-        assertEquals(1, lista.size());
+        ResponseEntity<List<MetodoPago>> response =
+                controller.listar();
 
-        // Verifica que el servicio fue llamado
-        verify(service).listar();
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertEquals(1,
+                response.getBody().size());
+
+        verify(service, times(1))
+                .listar();
     }
 
-    @Test // Prueba del método guardar()
+    @Test
     void guardar() {
-        // Simula el guardado
-        when(service.guardar(metodo)).thenReturn(metodo);
 
-        // Ejecuta el método
-        MetodoPago resultado = controller.guardar(metodo);
+        when(service.guardar(metodo))
+                .thenReturn(metodo);
 
-        // Verifica que no sea null
-        assertNotNull(resultado);
+        ResponseEntity<MetodoPago> response =
+                controller.guardar(metodo);
 
-        // Verifica que el servicio fue llamado
-        verify(service).guardar(metodo);
+        assertEquals(201,
+                response.getStatusCode().value());
+
+        assertNotNull(response.getBody());
+
+        verify(service, times(1))
+                .guardar(metodo);
     }
 
-    @Test // Prueba del método actualizar()
+    @Test
     void actualizar() {
-        // Simula la actualización
-        when(service.actualizar(1L, metodo)).thenReturn(metodo);
 
-        // Ejecuta el método
-        MetodoPago resultado = controller.actualizar(1L, metodo);
+        when(service.actualizar(1L, metodo))
+                .thenReturn(metodo);
 
-        // Verifica que no sea null
-        assertNotNull(resultado);
+        ResponseEntity<MetodoPago> response =
+                controller.actualizar(1L, metodo);
 
-        // Verifica que el servicio fue llamado
-        verify(service).actualizar(1L, metodo);
+        assertEquals(200,
+                response.getStatusCode().value());
+
+        assertNotNull(response.getBody());
+
+        verify(service, times(1))
+                .actualizar(1L, metodo);
     }
 
-    @Test // Prueba del método eliminar()
+    @Test
     void eliminar() {
-        // Ejecuta eliminación
-        controller.eliminar(1L);
 
-        // Verifica que el servicio fue llamado
-        verify(service).eliminar(1L);
+        doNothing().when(service)
+                .eliminar(1L);
+
+        ResponseEntity<Void> response =
+                controller.eliminar(1L);
+
+        assertEquals(204,
+                response.getStatusCode().value());
+
+        verify(service, times(1))
+                .eliminar(1L);
     }
 }
