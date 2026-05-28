@@ -221,15 +221,16 @@ La configuración incluye:
 
 # 16. Validaciones implementadas
 
-Se implementaron validaciones usando Jakarta Validation:
+Se implementaron validaciones usando Jakarta Validation a nivel de entidades para evitar registros inválidos en la base de datos:
 
-- @NotBlank
-- @NotNull
-- @Email
-- @Pattern
-- @Size
+- `@NotBlank` (Nombre, username, documento, etc.)
+- `@NotNull` (Fechas y relaciones obligatorias)
+- `@Email` (Formato de correo electrónico)
+- `@Pattern` (Formatos numéricos de DNI y teléfono)
+- `@Size` (Límites de caracteres mínimos y máximos)
+- `@Positive` y `@PositiveOrZero` (Precios, cantidades y stock)
 
-Estas validaciones permiten evitar registros inválidos en la base de datos.
+Adicionalmente, se configuró un **Manejador de Excepciones Global (`@RestControllerAdvice`)** para capturar automáticamente estos errores de validación (`MethodArgumentNotValidException`) y retornar al cliente un código **HTTP 400 Bad Request** junto con un JSON estructurado que detalla exactamente qué campos no cumplen con las reglas.
 
 ---
 
@@ -328,11 +329,25 @@ Se probaron:
 ✔ Spring Security  
 ✔ BCrypt  
 ✔ Validaciones  
+✔ Manejo de excepciones global  
 ✔ Base de datos MySQL  
 ✔ Endpoints REST funcionales  
 ✔ Pruebas con Postman  
 
-# 22. Estructura del proyecto del segundo avance
+---
+
+# 22. Manejo global de excepciones
+
+Se implementó un controlador de consejos global (`@RestControllerAdvice`) para capturar excepciones a nivel de aplicación y retornar respuestas estructuradas en formato JSON:
+
+- **Excepciones de Negocio (`RuntimeException`):** Captura de forma dinámica errores específicos. Si el mensaje contiene *"no encontrado"*, responde con un código **HTTP 404 Not Found**. Si el mensaje contiene *"ya existe"* o *"ya registrado"*, responde con **HTTP 400 Bad Request**.
+- **Errores de Validaciones (`MethodArgumentNotValidException`):** Captura automáticamente las fallas de campos anotados con validaciones de Jakarta (como `@NotBlank`, `@Email`, etc.) y retorna un mapa detallado (`validationErrors`) con los campos incorrectos y sus razones bajo un código **HTTP 400 Bad Request**.
+- **Errores de Argumentos e Invalideces (`IllegalArgumentException`):** Retorna un código **HTTP 400 Bad Request**.
+- **Excepciones Generales (`Exception`):** Atrapa cualquier otro error no controlado y devuelve un HTTP **500 Internal Server Error** con estructura controlada para no filtrar trazas internas del servidor.
+
+---
+
+# 23. Estructura del proyecto del segundo avance
 
 ```
 
@@ -351,6 +366,7 @@ PROYECTOGEMELASBOUTIQUE-MAIN
 │       │   │   ├── ClienteController.java
 │       │   │   ├── DetalleVentaController.java
 │       │   │   ├── EmpleadoController.java
+│       │   │   ├── GlobalExceptionHandler.java
 │       │   │   ├── MetodoPagoController.java
 │       │   │   ├── ProductoController.java
 │       │   │   ├── UsuarioController.java
