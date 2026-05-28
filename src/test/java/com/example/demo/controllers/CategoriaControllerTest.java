@@ -2,11 +2,15 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Categoria;
 import com.example.demo.service.CategoriaService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.List;
@@ -16,87 +20,105 @@ import static org.mockito.Mockito.*;
 
 class CategoriaControllerTest {
 
-    @Mock // Crea un mock (simulación) del servicio
+    @Mock
     private CategoriaService service;
 
-    @InjectMocks // Inyecta el mock dentro del controlador
+    @InjectMocks
     private CategoriaController controller;
 
-    private Categoria categoria; // Objeto de prueba
+    private Categoria categoria;
 
-    @BeforeEach // Se ejecuta antes de cada prueba
+    @BeforeEach
     void setUp() {
-        MockitoAnnotations.openMocks(this); // Inicializa los mocks
 
-        categoria = new Categoria(); // Crea una categoría de prueba
+        MockitoAnnotations.openMocks(this);
+
+        categoria = new Categoria();
         categoria.setId(1L);
-        categoria.setNombre("Electrónica"); // Valor de ejemplo
+        categoria.setNombre("Electrónica");
     }
 
-    @Test // Prueba del método listar()
+    @Test
     void testListar() {
-        // Simula que el servicio devuelve una lista con una categoría
-        when(service.listar()).thenReturn(Arrays.asList(categoria));
 
-        // Ejecuta el método del controlador
-        List<Categoria> resultado = controller.listar();
+        when(service.listar())
+                .thenReturn(Arrays.asList(categoria));
 
-        // Verifica resultados
-        assertNotNull(resultado); // No debe ser null
-        assertEquals(1, resultado.size()); // Debe tener 1 elemento
+        ResponseEntity<List<Categoria>> response =
+                controller.listar();
 
-        // Verifica que el servicio se llamó una vez
+        assertNotNull(response);
+        assertEquals(1,
+                response.getBody().size());
+
         verify(service, times(1)).listar();
     }
 
-    @Test // Prueba del método guardar()
+    @Test
     void testGuardar() {
-        // Simula el guardado
-        when(service.guardar(any(Categoria.class))).thenReturn(categoria);
 
-        Categoria resultado = controller.guardar(categoria);
+        when(service.guardar(any(Categoria.class)))
+                .thenReturn(categoria);
 
-        assertNotNull(resultado);
-        assertEquals("Electrónica", resultado.getNombre());
+        ResponseEntity<Categoria> response =
+                controller.guardar(categoria);
 
-        // Verifica que se llamó al servicio
-        verify(service, times(1)).guardar(categoria);
+        assertNotNull(response);
+        assertEquals("Electrónica",
+                response.getBody().getNombre());
+
+        verify(service, times(1))
+                .guardar(categoria);
     }
 
-    @Test // Prueba del método obtener()
+    @Test
     void testObtener() {
-        // Simula búsqueda por ID
-        when(service.obtener(1L)).thenReturn(categoria);
 
-        Categoria resultado = controller.obtener(1L);
+        when(service.obtener(1L))
+                .thenReturn(categoria);
 
-        assertNotNull(resultado);
-        assertEquals(1L, resultado.getId());
+        ResponseEntity<Categoria> response =
+                controller.obtener(1L);
 
-        verify(service, times(1)).obtener(1L);
+        assertNotNull(response);
+        assertEquals(1L,
+                response.getBody().getId());
+
+        verify(service, times(1))
+                .obtener(1L);
     }
 
-    @Test // Prueba del método actualizar()
+    @Test
     void testActualizar() {
-        // Simula actualización
-        when(service.actualizar(eq(1L), any(Categoria.class))).thenReturn(categoria);
 
-        Categoria resultado = controller.actualizar(1L, categoria);
+        when(service.actualizar(eq(1L),
+                any(Categoria.class)))
+                .thenReturn(categoria);
 
-        assertNotNull(resultado);
-        assertEquals("Electrónica", resultado.getNombre());
+        ResponseEntity<Categoria> response =
+                controller.actualizar(1L, categoria);
 
-        verify(service, times(1)).actualizar(1L, categoria);
+        assertNotNull(response);
+        assertEquals("Electrónica",
+                response.getBody().getNombre());
+
+        verify(service, times(1))
+                .actualizar(1L, categoria);
     }
 
-    @Test // Prueba del método eliminar()
+    @Test
     void testEliminar() {
-        // Simula eliminación (no devuelve nada)
-        doNothing().when(service).eliminar(1L);
 
-        controller.eliminar(1L);
+        doNothing().when(service)
+                .eliminar(1L);
 
-        // Verifica que se llamó al servicio
-        verify(service, times(1)).eliminar(1L);
+        ResponseEntity<Void> response =
+                controller.eliminar(1L);
+
+        assertEquals(204,
+                response.getStatusCodeValue());
+
+        verify(service, times(1))
+                .eliminar(1L);
     }
 }

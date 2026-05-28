@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.Producto;
-import com.example.demo.service.ProductoService;
+import com.example.demo.models.Rol;
+import com.example.demo.service.RolService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,26 +22,25 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 // Habilita Mockito
-class ProductoControllerTest {
+class RolControllerTest {
 
     @Mock
     // Simula el service
-    private ProductoService service;
+    private RolService service;
 
     @InjectMocks
     // Inyecta el mock en el controller
-    private ProductoController controller;
+    private RolController controller;
 
-    private Producto producto;
+    private Rol rol;
 
     @BeforeEach
     void setUp() {
 
-        producto = new Producto();
+        rol = new Rol();
 
-        producto.setId(1L);
-        producto.setNombre("Laptop");
-        producto.setDescripcion("Laptop Gamer");
+        rol.setId(1L);
+        rol.setNombre("ADMIN");
     }
 
     @Test
@@ -49,9 +48,9 @@ class ProductoControllerTest {
     void listar() {
 
         when(service.listar())
-                .thenReturn(Arrays.asList(producto));
+                .thenReturn(Arrays.asList(rol));
 
-        ResponseEntity<List<Producto>> response =
+        ResponseEntity<List<Rol>> response =
                 controller.listar();
 
         assertNotNull(response);
@@ -69,32 +68,32 @@ class ProductoControllerTest {
         // Prueba guardar
     void guardar() {
 
-        when(service.guardar(producto))
-                .thenReturn(producto);
+        when(service.guardar(rol))
+                .thenReturn(rol);
 
-        ResponseEntity<Producto> response =
-                controller.guardar(producto);
+        ResponseEntity<Rol> response =
+                controller.guardar(rol);
 
         assertNotNull(response);
 
         assertEquals(HttpStatus.CREATED,
                 response.getStatusCode());
 
-        assertEquals("Laptop",
+        assertEquals("ADMIN",
                 response.getBody().getNombre());
 
-        verify(service).guardar(producto);
+        verify(service).guardar(rol);
     }
 
     @Test
         // Prueba obtener por id
-    void obtener() {
+    void obtenerPorId() {
 
-        when(service.obtener(1L))
-                .thenReturn(producto);
+        when(service.obtenerPorId(1L))
+                .thenReturn(rol);
 
-        ResponseEntity<Producto> response =
-                controller.obtener(1L);
+        ResponseEntity<Rol> response =
+                controller.obtenerPorId(1L);
 
         assertNotNull(response);
 
@@ -104,28 +103,28 @@ class ProductoControllerTest {
         assertEquals(1L,
                 response.getBody().getId());
 
-        verify(service).obtener(1L);
+        verify(service).obtenerPorId(1L);
     }
 
     @Test
         // Prueba actualizar
     void actualizar() {
 
-        when(service.actualizar(1L, producto))
-                .thenReturn(producto);
+        when(service.actualizar(1L, rol))
+                .thenReturn(rol);
 
-        ResponseEntity<Producto> response =
-                controller.actualizar(1L, producto);
+        ResponseEntity<Rol> response =
+                controller.actualizar(1L, rol);
 
         assertNotNull(response);
 
         assertEquals(HttpStatus.OK,
                 response.getStatusCode());
 
-        assertEquals("Laptop",
+        assertEquals("ADMIN",
                 response.getBody().getNombre());
 
-        verify(service).actualizar(1L, producto);
+        verify(service).actualizar(1L, rol);
     }
 
     @Test

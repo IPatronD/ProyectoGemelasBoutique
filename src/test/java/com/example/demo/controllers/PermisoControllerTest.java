@@ -1,7 +1,7 @@
 package com.example.demo.controllers;
 
-import com.example.demo.models.Producto;
-import com.example.demo.service.ProductoService;
+import com.example.demo.models.Permiso;
+import com.example.demo.service.PermisoService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -22,26 +22,25 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 // Habilita Mockito
-class ProductoControllerTest {
+class PermisoControllerTest {
 
     @Mock
     // Simula el service
-    private ProductoService service;
+    private PermisoService service;
 
     @InjectMocks
     // Inyecta el mock en el controller
-    private ProductoController controller;
+    private PermisoController controller;
 
-    private Producto producto;
+    private Permiso permiso;
 
     @BeforeEach
     void setUp() {
 
-        producto = new Producto();
+        permiso = new Permiso();
 
-        producto.setId(1L);
-        producto.setNombre("Laptop");
-        producto.setDescripcion("Laptop Gamer");
+        permiso.setId(1L);
+        permiso.setNombre("CREAR_USUARIO");
     }
 
     @Test
@@ -49,9 +48,9 @@ class ProductoControllerTest {
     void listar() {
 
         when(service.listar())
-                .thenReturn(Arrays.asList(producto));
+                .thenReturn(Arrays.asList(permiso));
 
-        ResponseEntity<List<Producto>> response =
+        ResponseEntity<List<Permiso>> response =
                 controller.listar();
 
         assertNotNull(response);
@@ -69,32 +68,32 @@ class ProductoControllerTest {
         // Prueba guardar
     void guardar() {
 
-        when(service.guardar(producto))
-                .thenReturn(producto);
+        when(service.guardar(permiso))
+                .thenReturn(permiso);
 
-        ResponseEntity<Producto> response =
-                controller.guardar(producto);
+        ResponseEntity<Permiso> response =
+                controller.guardar(permiso);
 
         assertNotNull(response);
 
         assertEquals(HttpStatus.CREATED,
                 response.getStatusCode());
 
-        assertEquals("Laptop",
+        assertEquals("CREAR_USUARIO",
                 response.getBody().getNombre());
 
-        verify(service).guardar(producto);
+        verify(service).guardar(permiso);
     }
 
     @Test
         // Prueba obtener por id
-    void obtener() {
+    void obtenerPorId() {
 
-        when(service.obtener(1L))
-                .thenReturn(producto);
+        when(service.obtenerPorId(1L))
+                .thenReturn(permiso);
 
-        ResponseEntity<Producto> response =
-                controller.obtener(1L);
+        ResponseEntity<Permiso> response =
+                controller.obtenerPorId(1L);
 
         assertNotNull(response);
 
@@ -104,28 +103,28 @@ class ProductoControllerTest {
         assertEquals(1L,
                 response.getBody().getId());
 
-        verify(service).obtener(1L);
+        verify(service).obtenerPorId(1L);
     }
 
     @Test
         // Prueba actualizar
     void actualizar() {
 
-        when(service.actualizar(1L, producto))
-                .thenReturn(producto);
+        when(service.actualizar(1L, permiso))
+                .thenReturn(permiso);
 
-        ResponseEntity<Producto> response =
-                controller.actualizar(1L, producto);
+        ResponseEntity<Permiso> response =
+                controller.actualizar(1L, permiso);
 
         assertNotNull(response);
 
         assertEquals(HttpStatus.OK,
                 response.getStatusCode());
 
-        assertEquals("Laptop",
+        assertEquals("CREAR_USUARIO",
                 response.getBody().getNombre());
 
-        verify(service).actualizar(1L, producto);
+        verify(service).actualizar(1L, permiso);
     }
 
     @Test

@@ -2,11 +2,17 @@ package com.example.demo.controllers;
 
 import com.example.demo.models.Venta;
 import com.example.demo.service.VentaService;
+
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -17,71 +23,92 @@ import static org.mockito.Mockito.*;
 // Habilita Mockito en JUnit 5
 class VentaControllerTest {
 
-    @Mock // Simula el servicio
+    @Mock
+    // Simula el servicio
     private VentaService service;
 
-    @InjectMocks // Inyecta el mock en el controlador
-    private VentaController ventaController;
+    @InjectMocks
+    // Inyecta el mock en el controlador
+    private VentaController controller;
 
-    @Test // Prueba del método listar()
-    void listar() {
-        Venta v1 = new Venta();
-        v1.setTotal(200.0);
+    private Venta venta;
 
-        // Simula que el servicio devuelve una lista con una venta
-        when(service.listar()).thenReturn(List.of(v1));
+    @BeforeEach
+    void setUp() {
 
-        // Ejecuta el método
-        List<Venta> resultado = ventaController.listar();
+        venta = new Venta();
+        venta.setId(1L);
+        venta.setTotal(500.0);
+    }
 
-        // Validaciones
-        assertNotNull(resultado); // No debe ser null
-        assertEquals(1, resultado.size()); // Debe tener 1 elemento
+    @Test
+        // Prueba listar ventas
+    void listar_DebeRetornarLista() {
 
-        // Verifica que el servicio fue llamado
+        when(service.listar())
+                .thenReturn(List.of(venta));
+
+        ResponseEntity<List<Venta>> response =
+                controller.listar();
+
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
+        assertEquals(HttpStatus.OK,
+                response.getStatusCode());
+
         verify(service).listar();
     }
 
-    @Test // Prueba del método guardar()
-    void guardar() {
-        Venta venta = new Venta();
-        venta.setTotal(500.0);
+    @Test
+        // Prueba guardar venta
+    void guardar_DebeGuardarVenta() {
 
-        // Simula el guardado
-        when(service.guardar(any(Venta.class))).thenReturn(venta);
+        when(service.guardar(venta))
+                .thenReturn(venta);
 
-        // Ejecuta el método
-        Venta resultado = ventaController.guardar(venta);
+        ResponseEntity<Venta> response =
+                controller.guardar(venta);
 
-        // Validaciones
-        assertNotNull(resultado);
-        assertEquals(500.0, resultado.getTotal());
+        assertNotNull(response.getBody());
+        assertEquals(500.0,
+                response.getBody().getTotal());
 
-        // Verifica que se llamó con el mismo objeto
+        assertEquals(HttpStatus.CREATED,
+                response.getStatusCode());
+
         verify(service).guardar(venta);
     }
 
-    @Test // Prueba del método obtener()
-    void obtener() {
+    @Test
+        // Prueba obtener venta
+    void obtener_DebeRetornarVenta() {
 
-        Long idBuscado = 1L;
+        when(service.obtener(1L))
+                .thenReturn(venta);
 
-        Venta ventaEsperada = new Venta();
-        ventaEsperada.setId(idBuscado);
-        ventaEsperada.setTotal(350.0);
+        ResponseEntity<Venta> response =
+                controller.obtener(1L);
 
-        // Simula búsqueda por ID
-        when(service.obtener(idBuscado)).thenReturn(ventaEsperada);
+        assertNotNull(response.getBody());
+        assertEquals(1L,
+                response.getBody().getId());
 
-        // Ejecuta el método
-        Venta resultado = ventaController.obtener(idBuscado);
+        assertEquals(HttpStatus.OK,
+                response.getStatusCode());
 
-        // Validaciones
-        assertNotNull(resultado);
-        assertEquals(idBuscado, resultado.getId());
-        assertEquals(350.0, resultado.getTotal());
+        verify(service).obtener(1L);
+    }
 
-        // Verifica que se llamó correctamente
-        verify(service).obtener(idBuscado);
+    @Test
+        // Prueba eliminar venta
+    void eliminar_DebeLlamarService() {
+
+        ResponseEntity<Void> response =
+                controller.eliminar(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT,
+                response.getStatusCode());
+
+        verify(service).eliminar(1L);
     }
 }

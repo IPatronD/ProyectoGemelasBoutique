@@ -5,9 +5,12 @@ import com.example.demo.service.ClienteService;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
@@ -16,68 +19,70 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-// Habilita Mockito en JUnit 5
 class ClienteControllerTest {
 
-    @Mock // Crea un mock (simulación) del servicio
+    @Mock
     private ClienteService service;
 
-    @InjectMocks // Inyecta el mock dentro del controlador
+    @InjectMocks
     private ClienteController controller;
 
-    @Test // Prueba del método listar()
+    @Test
     void listar_DebeRetornarLista() {
-        // Simula que el servicio devuelve una lista vacía
-        when(service.listar()).thenReturn(Collections.emptyList());
 
-        // Ejecuta el método del controlador
-        List<Cliente> response = controller.listar();
+        when(service.listar())
+                .thenReturn(Collections.emptyList());
 
-        // Verifica que la respuesta no sea null
+        ResponseEntity<List<Cliente>> response =
+                controller.listar();
+
         assertNotNull(response);
 
-        // Verifica que el método listar del servicio fue llamado
         verify(service).listar();
     }
 
-    @Test // Prueba del método buscar()
+    @Test
     void buscar_DebeRetornarCliente() {
-        Cliente c = new Cliente(); // Crea un cliente de prueba
-        c.setId(1L);
 
-        // Simula búsqueda por ID
-        when(service.buscarPorId(1L)).thenReturn(c);
-
-        // Ejecuta el método
-        Cliente response = controller.buscar(1L);
-
-        // Verifica que el ID sea correcto
-        assertEquals(1L, response.getId());
-    }
-
-    @Test // Prueba del método guardar()
-    void guardar_DebeGuardarCliente() {
         Cliente c = new Cliente();
         c.setId(1L);
 
-        // Simula el guardado
-        when(service.guardar(c)).thenReturn(c);
+        when(service.buscarPorId(1L))
+                .thenReturn(c);
 
-        Cliente response = controller.guardar(c);
+        ResponseEntity<Cliente> response =
+                controller.buscar(1L);
 
-        // Verifica que no sea null
+        assertEquals(1L,
+                response.getBody().getId());
+    }
+
+    @Test
+    void guardar_DebeGuardarCliente() {
+
+        Cliente c = new Cliente();
+        c.setId(1L);
+
+        when(service.guardar(c))
+                .thenReturn(c);
+
+        ResponseEntity<Cliente> response =
+                controller.guardar(c);
+
         assertNotNull(response);
 
-        // Verifica que se llamó al servicio
         verify(service).guardar(c);
     }
 
-    @Test // Prueba del método eliminar()
+    @Test
     void eliminar_DebeLlamarService() {
-        // Ejecuta eliminación
-        controller.eliminar(1L);
 
-        // Verifica que se llamó al servicio
+        ResponseEntity<Void> response =
+                controller.eliminar(1L);
+
+        assertEquals(204,
+                response.getStatusCodeValue());
+
         verify(service).eliminar(1L);
     }
 }

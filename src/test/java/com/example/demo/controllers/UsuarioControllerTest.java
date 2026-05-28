@@ -3,11 +3,16 @@ package com.example.demo.controllers;
 import com.example.demo.models.Usuario;
 import com.example.demo.service.UsuarioService;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Collections;
 import java.util.List;
@@ -19,80 +24,167 @@ import static org.mockito.Mockito.*;
 // Habilita Mockito en JUnit 5
 class UsuarioControllerTest {
 
-    @Mock // Crea un mock (simulación) del servicio
+    @Mock
+    // Simula el servicio
     private UsuarioService service;
 
-    @InjectMocks // Inyecta el mock dentro del controlador
+    @InjectMocks
+    // Inyecta el mock en el controlador
     private UsuarioController controller;
 
-    @Test // Prueba del método listar()
+    private Usuario usuario;
+
+    @BeforeEach
+    void setUp() {
+
+        usuario = new Usuario();
+        usuario.setId(1L);
+        usuario.setUsername("diego");
+    }
+
+    @Test
+        // Prueba listar usuarios
     void listar_DebeRetornarLista() {
-        // Simula que el servicio devuelve una lista vacía
-        when(service.listar()).thenReturn(Collections.emptyList());
 
-        // Ejecuta el método
-        List<Usuario> response = controller.listar();
+        when(service.listar())
+                .thenReturn(Collections.singletonList(usuario));
 
-        // Verifica que no sea null
-        assertNotNull(response);
+        ResponseEntity<List<Usuario>> response = controller.listar();
 
-        // Verifica que el método fue llamado
+        assertNotNull(response.getBody());
+        assertEquals(1, response.getBody().size());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
         verify(service).listar();
     }
 
-    @Test // Prueba del método obtener()
-    void obtener_DebeRetornarUsuario() {
-        Usuario u = new Usuario(); // Objeto de prueba
-        u.setId(1L);
-
-        // Simula búsqueda por ID
-        when(service.obtener(1L)).thenReturn(u);
-
-        // Ejecuta el método
-        Usuario response = controller.obtener(1L);
-
-        // Verifica el resultado
-        assertEquals(1L, response.getId());
-    }
-
-    @Test // Prueba del método guardar()
+    @Test
+        // Prueba guardar usuario
     void guardar_DebeGuardarUsuario() {
-        Usuario u = new Usuario();
-        u.setId(1L);
 
-        // Simula el guardado
-        when(service.guardar(u)).thenReturn(u);
+        when(service.guardar(usuario))
+                .thenReturn(usuario);
 
-        Usuario response = controller.guardar(u);
+        ResponseEntity<Usuario> response =
+                controller.guardar(usuario);
 
-        // Verifica que no sea null
-        assertNotNull(response);
+        assertNotNull(response.getBody());
+        assertEquals(1L, response.getBody().getId());
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
 
-        // Verifica que se llamó al servicio
-        verify(service).guardar(u);
+        verify(service).guardar(usuario);
     }
 
-    @Test // Prueba del método actualizar()
+    @Test
+        // Prueba obtener usuario
+    void obtener_DebeRetornarUsuario() {
+
+        when(service.obtener(1L))
+                .thenReturn(usuario);
+
+        ResponseEntity<Usuario> response =
+                controller.obtener(1L);
+
+        assertNotNull(response.getBody());
+        assertEquals(1L, response.getBody().getId());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        verify(service).obtener(1L);
+    }
+
+    @Test
+        // Prueba actualizar usuario
     void actualizar_DebeActualizarUsuario() {
-        Usuario u = new Usuario();
-        u.setId(1L);
 
-        // Simula actualización (usa guardar internamente)
-        when(service.guardar(u)).thenReturn(u);
+        when(service.actualizar(1L, usuario))
+                .thenReturn(usuario);
 
-        // Ejecuta el método
-        Usuario response = controller.actualizar(1L, u);
+        ResponseEntity<Usuario> response =
+                controller.actualizar(1L, usuario);
 
-        // Verifica que el ID sea correcto
-        assertEquals(1L, response.getId());
+        assertNotNull(response.getBody());
+        assertEquals(1L, response.getBody().getId());
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        verify(service).actualizar(1L, usuario);
     }
 
-    @Test // Prueba del método eliminar()
+    @Test
+        // Prueba eliminar usuario
     void eliminar_DebeLlamarService() {
-        // Ejecuta eliminación
-        controller.eliminar(1L);
 
-        // Verifica que se llamó al servicio
+        ResponseEntity<Void> response =
+                controller.eliminar(1L);
+
+        assertEquals(HttpStatus.NO_CONTENT,
+                response.getStatusCode());
+
         verify(service).eliminar(1L);
+    }
+
+    @Test
+        // Prueba buscar por username
+    void buscarPorUsername_DebeRetornarUsuario() {
+
+        when(service.buscarPorUsername("diego"))
+                .thenReturn(usuario);
+
+        ResponseEntity<Usuario> response =
+                controller.buscarPorUsername("diego");
+
+        assertNotNull(response.getBody());
+        assertEquals("diego",
+                response.getBody().getUsername());
+
+        verify(service).buscarPorUsername("diego");
+    }
+
+    @Test
+        // Prueba buscar usuarios por rol
+    void buscarPorRol_DebeRetornarLista() {
+
+        when(service.buscarPorRol("ADMIN"))
+                .thenReturn(Collections.singletonList(usuario));
+
+        ResponseEntity<List<Usuario>> response =
+                controller.buscarPorRol("ADMIN");
+
+        assertNotNull(response.getBody());
+        assertEquals(1,
+                response.getBody().size());
+
+        verify(service).buscarPorRol("ADMIN");
+    }
+
+    @Test
+        // Prueba listar usuarios activos
+    void listarActivos_DebeRetornarLista() {
+
+        when(service.listarActivos())
+                .thenReturn(Collections.singletonList(usuario));
+
+        ResponseEntity<List<Usuario>> response =
+                controller.listarActivos();
+
+        assertNotNull(response.getBody());
+        assertEquals(1,
+                response.getBody().size());
+
+        verify(service).listarActivos();
+    }
+
+    @Test
+        // Prueba verificar username
+    void existeUsername_DebeRetornarTrue() {
+
+        when(service.existeUsername("diego"))
+                .thenReturn(true);
+
+        ResponseEntity<Boolean> response =
+                controller.existeUsername("diego");
+
+        assertTrue(response.getBody());
+
+        verify(service).existeUsername("diego");
     }
 }
