@@ -160,8 +160,278 @@ El backend inicial permite registrar usuarios, clientes y productos. Los endpoin
 ✔ Controladores REST funcionales  
 ✔ Endpoints probados con Postman  
 
-## Pendiente:
-- Seguridad (Spring Security + JWT)  
-- Integración con frontend (Angular)  
-- Reportes  
-- Validaciones avanzadas  
+---
+
+# 13. Segunda entrega del proyecto
+
+## Mejoras implementadas
+
+Durante la segunda fase del proyecto se realizaron mejoras importantes en la arquitectura, seguridad y funcionamiento general del sistema SaaS de Gemelas Boutique.
+
+Se completó la implementación de relaciones entre entidades, validaciones, consultas personalizadas con JPQL y seguridad mediante Spring Security.
+
+---
+
+# 14. Seguridad implementada (Spring Security)
+
+Se integró Spring Security para proteger los endpoints REST de la aplicación.
+
+## Características implementadas
+
+- Autenticación HTTP Basic
+- Control de acceso por roles
+- Encriptación de contraseñas con BCrypt
+- Restricción de endpoints por permisos
+- Usuarios autenticados para acceder a la API
+
+## Roles del sistema
+
+### ROLE_ADMIN
+Tiene acceso completo al sistema:
+- Gestión de usuarios
+- Eliminación de registros
+- Acceso total a ventas y productos
+
+### ROLE_VENDEDOR
+Puede:
+- Registrar ventas
+- Consultar productos
+- Registrar clientes
+
+---
+
+# 15. Configuración de seguridad
+
+Se creó el paquete:
+
+```text
+com.example.demo.security
+```
+
+Dentro de este paquete se implementó:
+
+- SecurityConfig.java
+
+La configuración incluye:
+- BCryptPasswordEncoder
+- SecurityFilterChain
+- Restricción de rutas por roles
+
+---
+
+# 16. Validaciones implementadas
+
+Se implementaron validaciones usando Jakarta Validation:
+
+- @NotBlank
+- @NotNull
+- @Email
+- @Pattern
+- @Size
+
+Estas validaciones permiten evitar registros inválidos en la base de datos.
+
+---
+
+# 17. Relaciones entre entidades
+
+Se completaron las relaciones JPA entre las entidades del sistema:
+
+- Cliente → Ventas
+- Usuario → Ventas
+- Venta → DetalleVenta
+- Producto → Categoria
+- MetodoPago → Ventas
+- Empleado → Usuario
+
+Relaciones utilizadas:
+- @OneToMany
+- @ManyToOne
+- @OneToOne
+
+---
+
+# 18. Consultas JPQL implementadas
+
+Se implementaron consultas personalizadas en los repositorios.
+
+## UsuarioRepository
+- Buscar por username
+- Buscar por rol
+- Listar usuarios activos
+
+## ProductoRepository
+- Buscar productos por nombre
+- Buscar productos por categoría
+- Buscar productos con stock bajo
+- Buscar productos por rango de precios
+
+## VentaRepository
+- Buscar ventas por cliente
+- Buscar ventas por usuario
+- Buscar ventas entre fechas
+
+## ClienteRepository
+- Buscar cliente por documento
+- Buscar clientes por tipo
+- Buscar clientes por nombres
+
+---
+
+# 19. Base de datos
+
+La base de datos fue implementada en MySQL Workbench.
+
+Tablas utilizadas:
+- usuarios
+- empleados
+- clientes
+- categorias
+- productos
+- ventas
+- detalle_venta
+- metodo_pago
+
+También se agregaron:
+- claves foráneas
+- relaciones entre tablas
+- datos de prueba
+
+---
+
+# 20. Pruebas realizadas
+
+Las pruebas fueron realizadas con Postman utilizando:
+
+- GET
+- POST
+- PUT
+- DELETE
+
+Se probaron:
+- Registro de usuarios
+- Registro de clientes
+- Registro de ventas
+- Seguridad con Spring Security
+- Acceso por roles
+- CRUD completos
+
+---
+
+# 21. Estado actual del proyecto
+
+## Implementado
+✔ Arquitectura por capas  
+✔ CRUD completos  
+✔ Relaciones JPA  
+✔ Consultas JPQL  
+✔ Spring Security  
+✔ BCrypt  
+✔ Validaciones  
+✔ Base de datos MySQL  
+✔ Endpoints REST funcionales  
+✔ Pruebas con Postman  
+
+# 22. Estructura del proyecto del segundo avance
+
+```
+
+PROYECTOGEMELASBOUTIQUE-MAIN
+│
+├── .github
+├── .mvn
+├── .vscode
+│
+├── src
+│   └── main
+│       ├── java/com/example/demo
+│       │
+│       │   ├── controllers
+│       │   │   ├── CategoriaController.java
+│       │   │   ├── ClienteController.java
+│       │   │   ├── DetalleVentaController.java
+│       │   │   ├── EmpleadoController.java
+│       │   │   ├── MetodoPagoController.java
+│       │   │   ├── ProductoController.java
+│       │   │   ├── UsuarioController.java
+│       │   │   └── VentaController.java
+│       │
+│       │   ├── models
+│       │   │   ├── Categoria.java
+│       │   │   ├── Cliente.java
+│       │   │   ├── DetalleVenta.java
+│       │   │   ├── Empleado.java
+│       │   │   ├── MetodoPago.java
+│       │   │   ├── Producto.java
+│       │   │   ├── Usuario.java
+│       │   │   └── Venta.java
+│       │
+│       │   ├── repository
+│       │   │   ├── CategoriaRepository.java
+│       │   │   ├── ClienteRepository.java
+│       │   │   ├── DetalleVentaRepository.java
+│       │   │   ├── EmpleadoRepository.java
+│       │   │   ├── MetodoPagoRepository.java
+│       │   │   ├── ProductoRepository.java
+│       │   │   ├── UsuarioRepository.java
+│       │   │   └── VentaRepository.java
+│       │
+│       │   ├── security
+│       │   │   ├── CustomUserDetailsService.java
+│       │   │   └── SecurityConfig.java
+│       │
+│       │   ├── service
+│       │   │   ├── impl
+│       │   │   │   ├── CategoriaServiceImpl.java
+│       │   │   │   ├── ClienteServiceImpl.java
+│       │   │   │   ├── DetalleVentaServiceImpl.java
+│       │   │   │   ├── EmpleadoServiceImpl.java
+│       │   │   │   ├── MetodoPagoServiceImpl.java
+│       │   │   │   ├── ProductoServiceImpl.java
+│       │   │   │   ├── UsuarioServiceImpl.java
+│       │   │   │   └── VentaServiceImpl.java
+│       │   │
+│       │   │   ├── CategoriaService.java
+│       │   │   ├── ClienteService.java
+│       │   │   ├── DetalleVentaService.java
+│       │   │   ├── EmpleadoService.java
+│       │   │   ├── MetodoPagoService.java
+│       │   │   ├── ProductoService.java
+│       │   │   ├── UsuarioService.java
+│       │   │   └── VentaService.java
+│       │
+│       │   └── DemoApplication.java
+│       │
+│       └── resources
+│           └── application.properties
+│
+├── test
+├── target
+│
+├── .gitattributes
+├── .gitignore
+├── HELP.md
+├── mvnw
+├── mvnw.cmd
+├── pom.xml
+└── README.md
+
+```
+---
+
+# Tecnologías Utilizadas
+
+- Java
+- Spring Boot
+- Spring Security
+- Spring Data JPA
+- Maven
+- MySQL
+- Postman
+
+---
+
+## Pendiente
+- Integración con Angular
+- JWT Authentication
+- Dashboard administrativo
