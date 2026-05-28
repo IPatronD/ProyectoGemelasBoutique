@@ -76,13 +76,13 @@ class EmpleadoControllerTest {
     void actualizar_DebeActualizarEmpleado() {
         Empleado e = new Empleado();
         e.setId(1L);
-
-        // Simula actualización (usa guardar internamente)
-        when(service.guardar(e)).thenReturn(e);
-
+ 
+        // Simula actualización
+        when(service.actualizar(eq(1L), any(Empleado.class))).thenReturn(e);
+ 
         // Ejecuta el método
         Empleado response = controller.actualizar(1L, e);
-
+ 
         // Verifica que el ID sea correcto
         assertEquals(1L, response.getId());
     }

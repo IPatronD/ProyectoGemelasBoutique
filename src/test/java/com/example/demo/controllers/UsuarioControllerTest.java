@@ -76,13 +76,13 @@ class UsuarioControllerTest {
     void actualizar_DebeActualizarUsuario() {
         Usuario u = new Usuario();
         u.setId(1L);
-
-        // Simula actualización (usa guardar internamente)
-        when(service.guardar(u)).thenReturn(u);
-
+ 
+        // Simula actualización
+        when(service.actualizar(eq(1L), any(Usuario.class))).thenReturn(u);
+ 
         // Ejecuta el método
         Usuario response = controller.actualizar(1L, u);
-
+ 
         // Verifica que el ID sea correcto
         assertEquals(1L, response.getId());
     }

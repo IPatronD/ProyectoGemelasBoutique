@@ -29,6 +29,10 @@ public class DetalleVenta {
 
     private int cantidad; // Cantidad de productos vendidos
     private double precio; // Precio del producto en la venta
+    private Double subtotal; // Subtotal por ítem (cantidad * precio)
+    private Double descuentoPorcentaje = 0.0; // Porcentaje de descuento por ítem
+    private Double descuentoMonto = 0.0; // Monto del descuento calculado
+    private Double neto = 0.0; // Subtotal neto por ítem (subtotal - descuentoMonto)
 
     // Constructor vacío (necesario para JPA)
     public DetalleVenta() {}
