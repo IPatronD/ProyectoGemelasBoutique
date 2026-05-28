@@ -72,10 +72,18 @@ class DetalleVentaServiceImplTest {
         verify(repository).findById(1L);
     }
 
-    @Test // Prueba eliminar()
+    @Test
     void eliminar() {
-        service.eliminar(1L);
 
-        verify(repository).deleteById(1L);
+        // Simula búsqueda exitosa
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(detalle));
+
+        // Ejecuta método
+        assertDoesNotThrow(() -> service.eliminar(1L));
+
+        // Verifica interacciones
+        verify(repository).findById(1L);
+        verify(repository).delete(detalle);
     }
 }

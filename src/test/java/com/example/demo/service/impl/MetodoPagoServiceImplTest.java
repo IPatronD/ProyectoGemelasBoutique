@@ -82,8 +82,19 @@ class MetodoPagoServiceImplTest {
 
     @Test // Prueba eliminar()
     void eliminar() {
+
+        // Simula que el método existe
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(metodo));
+
+        // Simula eliminación
+        doNothing().when(repository)
+                .delete(metodo);
+
         service.eliminar(1L);
 
-        verify(repository).deleteById(1L);
+        // Verificaciones
+        verify(repository).findById(1L);
+        verify(repository).delete(metodo);
     }
 }

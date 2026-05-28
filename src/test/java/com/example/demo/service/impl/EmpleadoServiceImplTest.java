@@ -101,15 +101,19 @@ class EmpleadoServiceImplTest {
     }
 
     @Test
-    // Prueba obtener empleado cuando no existe
-    void obtenerDebeRetornarNullCuandoNoExiste() {
+// Prueba obtener empleado cuando no existe
+    void obtenerDebeLanzarExcepcionCuandoNoExiste() {
 
         when(repository.findById(1L))
                 .thenReturn(Optional.empty());
 
-        Empleado resultado = service.obtener(1L);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.obtener(1L)
+        );
 
-        assertNull(resultado);
+        assertEquals("Empleado no encontrado",
+                exception.getMessage());
 
         verify(repository, times(1))
                 .findById(1L);
@@ -147,15 +151,23 @@ class EmpleadoServiceImplTest {
     }
 
     @Test
-    // Prueba eliminar empleado
+// Prueba eliminar empleado
     void eliminarDebeLlamarAlRepositorio() {
 
+        Empleado empleado = crearEmpleado(1L);
+
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(empleado));
+
         doNothing().when(repository)
-                .deleteById(1L);
+                .delete(empleado);
 
         service.eliminar(1L);
 
         verify(repository, times(1))
-                .deleteById(1L);
+                .findById(1L);
+
+        verify(repository, times(1))
+                .delete(empleado);
     }
 }

@@ -72,11 +72,15 @@ class ProductoServiceImplTest {
 
     @Test // Prueba obtener cuando NO existe
     void testObtener_noExistente() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Producto resultado = service.obtener(1L);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.obtener(1L)
+        );
 
-        assertNull(resultado); // según tu lógica actual
+        assertEquals("Producto no encontrado", exception.getMessage());
 
         verify(repository, times(1)).findById(1L);
     }
@@ -111,11 +115,15 @@ class ProductoServiceImplTest {
 
     @Test // Prueba actualizar cuando NO existe
     void testActualizar_noExistente() {
+
         when(repository.findById(1L)).thenReturn(Optional.empty());
 
-        Producto resultado = service.actualizar(1L, producto);
+        RuntimeException exception = assertThrows(
+                RuntimeException.class,
+                () -> service.actualizar(1L, producto)
+        );
 
-        assertNull(resultado);
+        assertEquals("Producto no encontrado", exception.getMessage());
 
         verify(repository).findById(1L);
         verify(repository, never()).save(any());
@@ -123,10 +131,15 @@ class ProductoServiceImplTest {
 
     @Test // Prueba eliminar()
     void testEliminar() {
-        doNothing().when(repository).deleteById(1L);
+
+        when(repository.findById(1L))
+                .thenReturn(Optional.of(producto));
+
+        doNothing().when(repository).delete(producto);
 
         service.eliminar(1L);
 
-        verify(repository, times(1)).deleteById(1L);
+        verify(repository, times(1)).findById(1L);
+        verify(repository, times(1)).delete(producto);
     }
 }
