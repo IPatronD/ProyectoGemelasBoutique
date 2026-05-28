@@ -10,8 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 //BY JAMES
 
-import java.util.List;
-
 @Entity // Entidad de la BD
 @Table(name = "productos")
 @Data
@@ -36,12 +34,12 @@ public class Producto {
     @Positive(message = "El precio debe ser mayor a 0")
     @Column(nullable = false)
     // Precio del producto
-    private double precio;
+    private Double precio;
 
     @PositiveOrZero(message = "El stock no puede ser negativo")
     @Column(nullable = false)
     // Cantidad disponible
-    private int stock;
+    private Integer stock;
 
     @ManyToOne
     @JoinColumn(name = "categoria_id", nullable = false)

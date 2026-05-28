@@ -32,7 +32,7 @@ public class Usuario {
 
     @Column(nullable = false)
     // Estado del usuario
-    private boolean estado = true;
+    private Boolean estado = true;
 
     @OneToOne
     @JoinColumn(name = "empleado_id", unique = true, nullable = false)
@@ -41,11 +41,7 @@ public class Usuario {
     private Empleado empleado;
 
     @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "usuario_roles",
-            joinColumns = @JoinColumn(name = "usuario_id"),
-            inverseJoinColumns = @JoinColumn(name = "rol_id")
-    )
+    @JoinTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
     // Un usuario puede tener muchos roles
     private Set<Rol> roles;
 }

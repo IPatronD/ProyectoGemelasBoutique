@@ -14,4 +14,6 @@ public interface CategoriaService {
     Categoria actualizar(Long id, Categoria categoriaDetails);
 
     void eliminar(Long id);
+
+    List<Object[]> productosMasVendidos();
 }

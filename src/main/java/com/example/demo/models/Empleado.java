@@ -42,7 +42,7 @@ public class Empleado {
 
     @Column(nullable = false)
     // Estado del empleado
-    private boolean estado = true;
+    private Boolean estado = true;
 
     @OneToOne(mappedBy = "empleado")
     // Un empleado tiene un usuario

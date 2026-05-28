@@ -35,11 +35,11 @@ public class DetalleVenta {
 
     @Positive(message = "El precio debe ser mayor a 0")
     // Precio del producto
-    private double precio; // Precio del producto en la venta
+    private Double precio; // Precio del producto en la venta
 
     @Positive(message = "El subtotal debe ser mayor a 0")
     // Total del detalle
-    private double subtotal; // Subtotal por ítem (cantidad * precio)
+    private Double subtotal; // Subtotal por ítem (cantidad * precio)
 
     // Constructor vacío
     public DetalleVenta() {

@@ -41,22 +41,20 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public Empleado obtener(Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
     }
 
     @Override
     public Empleado actualizar(Long id, Empleado empleado) {
 
         Empleado existente = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
         existente.setNombres(empleado.getNombres());
         existente.setApellidos(empleado.getApellidos());
         existente.setDni(empleado.getDni());
         existente.setCorreo(empleado.getCorreo());
-        existente.setEstado(empleado.isEstado());
+        existente.setEstado(empleado.getEstado());
 
         return repository.save(existente);
     }
@@ -65,8 +63,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void eliminar(Long id) {
 
         Empleado empleado = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
 
         repository.delete(empleado);
     }
@@ -77,16 +74,14 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public Empleado buscarPorDni(String dni) {
 
         return repository.findByDni(dni)
-                .orElseThrow(() ->
-                        new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
     }
 
     @Override
     public Empleado buscarPorCorreo(String correo) {
 
         return repository.findByCorreo(correo)
-                .orElseThrow(() ->
-                        new RuntimeException("Empleado no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Empleado no encontrado"));
     }
 
     @Override

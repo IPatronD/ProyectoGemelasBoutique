@@ -36,16 +36,14 @@ public class CategoriaServiceImpl implements CategoriaService {
     public Categoria obtener(Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
     }
 
     @Override
     public Categoria actualizar(Long id, Categoria categoriaDetails) {
 
         Categoria categoria = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         categoria.setNombre(categoriaDetails.getNombre());
         categoria.setDescripcion(categoriaDetails.getDescripcion());
@@ -57,9 +55,13 @@ public class CategoriaServiceImpl implements CategoriaService {
     public void eliminar(Long id) {
 
         Categoria categoria = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Categoría no encontrada"));
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
 
         repository.delete(categoria);
+    }
+
+    @Override
+    public List<Object[]> productosMasVendidos() {
+        return repository.productosMasVendidos();
     }
 }

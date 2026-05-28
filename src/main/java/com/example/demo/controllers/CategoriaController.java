@@ -70,4 +70,12 @@ public class CategoriaController {
 
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/productos-mas-vendidos")
+    public ResponseEntity<List<Object[]>> productosMasVendidos() {
+
+        return ResponseEntity.ok(
+                service.productosMasVendidos());
+    }
+
 }

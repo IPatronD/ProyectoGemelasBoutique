@@ -9,8 +9,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity // Entidad de la BD
 @Table(name = "clientes")
 @Data
@@ -49,7 +47,7 @@ public class Cliente {
 
     @Column(nullable = false)
     // Estado del cliente
-    private boolean estado = true;
+    private Boolean estado = true;
 
     @OneToMany(mappedBy = "cliente")
     // Un cliente puede tener muchas ventas

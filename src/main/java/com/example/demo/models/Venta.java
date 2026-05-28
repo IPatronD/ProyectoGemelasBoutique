@@ -1,9 +1,7 @@
 package com.example.demo.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,11 +20,9 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotNull(message = "La fecha es obligatoria")
     @Column(nullable = false)
     private LocalDateTime fecha;
 
-    @Positive(message = "El total debe ser mayor a 0")
     @Column(nullable = false)
     private Double total;
 
@@ -36,12 +32,12 @@ public class Venta {
     private Double descuento = 0.0; // descuento global en dinero
     private Double iva; // monto de IVA
 
-    private Double subtotalBruto = 0.0;      // suma precio * cantidad
-    private Double totalDescItems = 0.0;     // descuentos por ítems
-    private Double subtotalNeto = 0.0;       // bruto - desc ítems
+    private Double subtotalBruto = 0.0; // suma precio * cantidad
+    private Double totalDescItems = 0.0; // descuentos por ítems
+    private Double subtotalNeto = 0.0; // bruto - desc ítems
 
     private Double descuentoGlobalPorcentaje = 0.0; // %
-    private Double baseImponible = 0.0;      // neto - descuento global
+    private Double baseImponible = 0.0; // neto - descuento global
 
     private Double tasaIva = 16.0; // %
 
@@ -60,6 +56,5 @@ public class Venta {
     private MetodoPago metodoPago;
 
     @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<DetalleVenta> detalles; // 🔥 CORREGIDO (antes: detallesVenta)
+    private List<DetalleVenta> detalles;
 }

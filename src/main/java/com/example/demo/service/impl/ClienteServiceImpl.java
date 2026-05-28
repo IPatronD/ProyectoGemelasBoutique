@@ -43,23 +43,21 @@ public class ClienteServiceImpl implements ClienteService {
     public Cliente buscarPorId(Long id) {
 
         return repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
     }
 
     @Override
     public Cliente actualizar(Long id, Cliente clienteDetails) {
 
         Cliente cliente = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
         cliente.setTipo(clienteDetails.getTipo());
         cliente.setNombres(clienteDetails.getNombres());
         cliente.setDocumento(clienteDetails.getDocumento());
         cliente.setTelefono(clienteDetails.getTelefono());
         cliente.setCorreo(clienteDetails.getCorreo());
-        cliente.setEstado(clienteDetails.isEstado());
+        cliente.setEstado(clienteDetails.getEstado());
 
         return repository.save(cliente);
     }
@@ -68,8 +66,7 @@ public class ClienteServiceImpl implements ClienteService {
     public void eliminar(Long id) {
 
         Cliente cliente = repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
 
         repository.delete(cliente);
     }
@@ -80,16 +77,14 @@ public class ClienteServiceImpl implements ClienteService {
     public Cliente buscarPorDocumento(String documento) {
 
         return repository.findByDocumento(documento)
-                .orElseThrow(() ->
-                        new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
     }
 
     @Override
     public Cliente buscarPorCorreo(String correo) {
 
         return repository.findByCorreo(correo)
-                .orElseThrow(() ->
-                        new RuntimeException("Cliente no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Cliente no encontrado"));
     }
 
     @Override
