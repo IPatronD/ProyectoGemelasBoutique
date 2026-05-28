@@ -406,6 +406,30 @@ PROYECTOGEMELASBOUTIQUE-MAIN
 │           └── application.properties
 │
 ├── test
+│   └── java/com/example/demo
+│       │
+│       ├── controllers
+│       │   ├── CategoriaControllerTest.java
+│       │   ├── ClienteControllerTest.java
+│       │   ├── DetalleVentaControllerTest.java
+│       │   ├── EmpleadoControllerTest.java
+│       │   ├── MetodoPagoControllerTest.java
+│       │   ├── ProductoControllerTest.java
+│       │   ├── UsuarioControllerTest.java
+│       │   └── VentaControllerTest.java
+│       │
+│       ├── service
+│       │   └── impl
+│       │       ├── CategoriaServiceImplTest.java
+│       │       ├── ClienteServiceImplTest.java
+│       │       ├── DetalleVentaServiceImplTest.java
+│       │       ├── EmpleadoServiceImplTest.java
+│       │       ├── MetodoPagoServiceImplTest.java
+│       │       ├── ProductoServiceImplTest.java
+│       │       ├── UsuarioServiceImplTest.java
+│       │       └── VentaServiceImplTest.java
+│       │
+│       └── DemoApplicationTests.java
 ├── target
 │
 ├── .gitattributes
